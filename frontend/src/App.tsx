@@ -107,7 +107,7 @@ function App() {
         {/* Header */}
         <div className="p-5 pb-0">
           <h1 className="text-xl font-bold text-slate-900 tracking-tight">Course Planner</h1>
-          <p className="text-xs text-slate-400 mt-1">Fall 2024 Term</p>
+          <p className="text-xs text-slate-400 mt-1">Termcode: 202502</p>
         </div>
 
         {/* Tabs */}
