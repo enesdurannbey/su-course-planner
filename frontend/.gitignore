@@ -42,3 +42,10 @@ build/
 
 # Backend
 backend/__pycache__/
+
+# Locust logs & results
+*.log
+*_stats.csv
+*_failures.csv
+*_history.csv
+locust_report.html
