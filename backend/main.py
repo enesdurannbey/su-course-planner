@@ -105,7 +105,7 @@ def calculate_constraint_mask(constraints):
                 
     return constraint_mask
 
-def solve_schedule(selected_codes, all_courses,constraints, max_results=1500):
+def solve_schedule(selected_codes, all_courses,constraints, max_results=150):
     initial_mask = calculate_constraint_mask(constraints)
     target_courses = []
     
