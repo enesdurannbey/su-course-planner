@@ -27,7 +27,6 @@ else:
         "http://127.0.0.1:5173",
         "http://127.0.0.1:8000",
     ]
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -35,7 +34,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 app.add_middleware(
     GZipMiddleware,
     minimum_size = 1000
@@ -50,6 +48,14 @@ except FileNotFoundError:
 
 BIT_RESOLUTION = 10 
 SLOTS_PER_DAY = (24 * 60) // BIT_RESOLUTION 
+
+def get_time_signature(schedule):
+    times = []
+    for section in schedule:
+        for slot in section.get("schedule",[]):
+            if slot.get("day_index",-1) != -1:
+                times.append((slot["day_index"],slot["start_min"],slot["end_min"]))
+    return tuple((sorted(times)))
 
 
 def calculate_section_bitmask(section_schedule):
@@ -190,12 +196,29 @@ def create_schedule(selection: Selection):
 
     start_time = time.perf_counter()
 
-    schedules = solve_schedule(selected_items, grouped_data,constraints)
+    full_schedules = solve_schedule(selected_items, grouped_data, constraints, max_results=5000)
+    grouped_by_visual = {}
+    for sched in full_schedules:
+        sig = get_time_signature(sched)
+        if sig not in grouped_by_visual:
+            grouped_by_visual[sig] = []
+        grouped_by_visual[sig].append(sched)
+
+    final_list = []
+    groups = list(grouped_by_visual.values())
+    if groups:
+        max_len = max(len(g) for g in groups)
+        for i in range(max_len):
+            for group in groups:
+                if i < len(group):
+                    final_list.append(group[i])
+    
+    limited_response = final_list[:100]
 
     end_time = time.perf_counter()
 
     elapsed_time = end_time - start_time
     print(f"completed in {elapsed_time:.6f}s .")
-    print(len(schedules)," schedules found")
+    print(len(full_schedules)," schedules found")
     
-    return {"schedules": schedules}
+    return {"schedules": limited_response}
