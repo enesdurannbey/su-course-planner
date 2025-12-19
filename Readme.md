@@ -60,10 +60,51 @@ The backend API will be at `http://localhost:8000`
 
 ## Environment Variables
 
-Create `.env` in the `frontend/` directory:
+### Frontend
+Create `.env` in the `frontend/` directory (copy from `.env.example`):
 ```
 VITE_API_URL=http://localhost:8000
 ```
+
+For production, update to your backend URL:
+```
+VITE_API_URL=https://api.your-domain.com
+```
+
+### Backend
+Create `.env` in the `backend/` directory (copy from `.env.example`):
+```
+CORS_ORIGINS=http://localhost,http://localhost:5173,http://localhost:8000
+```
+
+For production, set allowed origins to your frontend domain(s):
+```
+CORS_ORIGINS=https://su-course-planner.vercel.app,https://your-domain.com
+```
+
+## Production Deployment
+
+### Backend (Python/FastAPI)
+1. Copy `.env.example` to `.env` and update CORS_ORIGINS with your production domain
+2. For Render, Railway, or similar:
+   ```bash
+   gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app
+   ```
+3. Set environment variables in your hosting platform's dashboard
+
+### Frontend (React/Vite)
+1. Copy `.env.example` to `.env.production` and update VITE_API_URL to your backend URL
+2. Build for production:
+   ```bash
+   npm run build
+   ```
+3. Deploy the `dist/` directory to Vercel, Netlify, or your hosting provider
+
+### Environment Variables Checklist
+- [ ] Backend: `CORS_ORIGINS` set to production frontend URL(s)
+- [ ] Frontend: `VITE_API_URL` set to production backend URL
+- [ ] Both `.env` files added to `.gitignore` (not committed to repository)
+- [ ] API endpoints use HTTPS in production
 
 ## Project Structure
 
