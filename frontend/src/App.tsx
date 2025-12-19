@@ -286,29 +286,72 @@ function App() {
       {/* (SCHEDULE)  */}
       <div className="flex-1 flex flex-col p-6 h-full relative">
         
-        {/* Navigation bar */}
+        {/* Navigation bar - Pagination */}
         {schedules.length > 0 && (
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-bold text-slate-700">Option {currentIndex + 1}</h2>
+          <div className="flex flex-col space-y-3 mb-4">
             
-            <div className="flex items-center space-x-2 bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
-              <button
-                disabled={currentIndex === 0}
-                onClick={() => setCurrentIndex(i => i - 1)}
-                className="w-8 h-8 flex items-center justify-center rounded hover:bg-slate-100 disabled:opacity-30 font-bold text-slate-600"
-              >
-                &lt;
-              </button>
-              <span className="text-xs font-bold text-indigo-600 w-16 text-center">
-                {currentIndex + 1} / {schedules.length}
-              </span>
-              <button
-                disabled={currentIndex === schedules.length - 1}
-                onClick={() => setCurrentIndex(i => i + 1)}
-                className="w-8 h-8 flex items-center justify-center rounded hover:bg-slate-100 disabled:opacity-30 font-bold text-slate-600"
-              >
-                &gt;
-              </button>
+            <div className="flex justify-between items-end">
+               <h2 className="text-lg font-bold text-slate-700">
+                  Option <span className="text-indigo-600 text-xl">{currentIndex + 1}</span>
+                  <span className="text-slate-400 font-normal text-sm ml-1">/ {schedules.length}</span>
+               </h2>
+               
+               <div className="flex space-x-1">
+                 <button 
+                   disabled={currentIndex === 0}
+                   onClick={() => setCurrentIndex(i => i - 1)}
+                   className="p-1 px-3 bg-white border rounded text-slate-500 hover:bg-slate-50 disabled:opacity-30"
+                 >
+                   ←
+                 </button>
+                 <button 
+                   disabled={currentIndex === schedules.length - 1}
+                   onClick={() => setCurrentIndex(i => i + 1)}
+                   className="p-1 px-3 bg-white border rounded text-slate-500 hover:bg-slate-50 disabled:opacity-30"
+                 >
+                   →
+                 </button>
+               </div>
+            </div>
+
+            
+            <div className="w-full bg-white border border-slate-200 rounded-lg p-2 flex items-center overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent space-x-2">
+              {(() => {
+                const jumps = [];
+                if (schedules.length > 0) jumps.push(1);
+                
+                for (let i = 5; i < schedules.length; i += 5) {
+                  jumps.push(i);
+                }
+                
+                if (schedules.length > 1 && !jumps.includes(schedules.length)) {
+                  jumps.push(schedules.length);
+                }
+                
+        
+                jumps.sort((a, b) => a - b);
+
+                return jumps.map((num) => {
+
+                  const isExact = (currentIndex + 1) === num;
+
+                  return (
+                    <button
+                      key={num}
+                      onClick={() => setCurrentIndex(num - 1)}
+                      className={`
+                        shrink-0 px-3 py-1.5 text-xs font-bold rounded-md border transition-all
+                        ${isExact 
+                          ? "bg-indigo-600 text-white border-indigo-600 shadow-md scale-105" 
+                          : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-indigo-50 hover:border-indigo-300 hover:text-indigo-600"
+                        }
+                      `}
+                    >
+                      {num}
+                    </button>
+                  );
+                });
+              })()}
             </div>
           </div>
         )}
