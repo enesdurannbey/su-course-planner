@@ -181,7 +181,6 @@ def create_schedule(selection: Selection):
     end_time = time.perf_counter()
 
     elapsed_time = end_time - start_time
-    print(constraints)
     print(f"completed in {elapsed_time:.6f}s .")
     print(len(schedules)," schedules found")
     
