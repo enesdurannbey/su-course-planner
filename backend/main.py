@@ -27,15 +27,13 @@ else:
         "http://127.0.0.1:5173",
         "http://127.0.0.1:8000",
     ]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[], 
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"], 
+    allow_headers=["*"],
 )
-
 app.add_middleware(
     GZipMiddleware,
     minimum_size = 1000
@@ -56,7 +54,7 @@ def get_time_signature(schedule):
     for section in schedule:
         for slot in section.get("schedule",[]):
             if slot.get("day_index",-1) != -1:
-                times.append((slot["day_index"]),(slot["start_min"]),(slot["end_min"]))
+                times.append((slot["day_index"],slot["start_min"],slot["end_min"]))
     return tuple((sorted(times)))
 
 
