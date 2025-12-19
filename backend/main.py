@@ -4,6 +4,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.responses import ORJSONResponse
 from pydantic import BaseModel
 import time
 
@@ -181,7 +182,7 @@ def submit(selection: Selection):
 def get_courses():
     return {"courses": grouped_data}
 
-@app.post("/schedule")
+@app.post("/schedule",response_class=ORJSONResponse)
 def create_schedule(selection: Selection):
     
     selected_items = selection.items
