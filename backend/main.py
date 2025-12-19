@@ -30,10 +30,11 @@ else:
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=[], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    allow_origin_regex="https://.*\.vercel\.app", 
 )
 
 app.add_middleware(
