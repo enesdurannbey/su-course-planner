@@ -1,0 +1,180 @@
+import itertools
+import json
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+import time
+
+app = FastAPI()
+
+class Selection(BaseModel):
+    items: list[str]
+    constraints:dict
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
+try:
+    with open("data/grouped_courses.json","r",encoding="UTF-8") as f:
+        grouped_data = json.load(f)
+except FileNotFoundError:
+    grouped_data = {}
+    print("cannot find data")
+
+BIT_RESOLUTION = 10 
+SLOTS_PER_DAY = (24 * 60) // BIT_RESOLUTION 
+
+
+def calculate_section_bitmask(section_schedule):
+    mask = 0
+    for item in section_schedule:
+        if item.get('day_index') == -1 or item.get('start_min') is None:
+            continue
+
+        start_min = int(item["start_min"])
+        end_min = int(item["end_min"])
+        day_index = int(item["day_index"])
+
+        day_offset = day_index * SLOTS_PER_DAY
+
+        start_slot = start_min // BIT_RESOLUTION
+        end_slot = end_min // BIT_RESOLUTION
+
+        for i in range(start_slot, end_slot):
+            global_position = day_offset + i
+            mask |= (1 << global_position)
+            
+    return mask
+
+def calculate_constraint_mask(constraints):
+    constraint_mask = 0
+
+    if constraints.get("no840",False):
+        start_min = 8*60 + 40
+        end_min = 9*60 + 30
+
+        start_slot = start_min // BIT_RESOLUTION
+        end_slot = end_min // BIT_RESOLUTION
+
+        for day_index in range(5):
+            day_offset = day_index * SLOTS_PER_DAY
+
+            for i in range(start_slot,end_slot):
+                global_position = day_offset + i
+                constraint_mask |= (1 << global_position)
+
+    if constraints.get("day_offs", []):
+
+        day_offs = [int(index) for index in constraints['day_offs'] ]
+  
+        for day_index in day_offs:
+            if not (0 <= day_index <= 6): continue 
+
+            day_offset = day_index * SLOTS_PER_DAY
+            
+            for i in range(SLOTS_PER_DAY):
+                global_position = day_offset + i
+                constraint_mask |= (1 << global_position)
+                
+    return constraint_mask
+
+def solve_schedule(selected_codes, all_courses,constraints, max_results=1500):
+    initial_mask = calculate_constraint_mask(constraints)
+    target_courses = []
+    
+    for code in selected_codes:
+        if code not in all_courses:
+            print(f"Uyarı: {code} veritabanında bulunamadı.")
+            continue
+
+        course_data = all_courses[code]
+        prepared_sections = []
+
+        for section in course_data["sections"]:
+            if(section['section'] == "X"): continue
+            mask = calculate_section_bitmask(section["schedule"])
+
+            if (mask & initial_mask) != 0:
+                continue
+            
+            prepared_sections.append({
+                'data': section, 
+                'mask': mask     
+            })
+        if not prepared_sections:
+            return []
+        
+        target_courses.append({
+            'code': code,
+            'sections': prepared_sections
+        })
+
+    target_courses.sort(key=lambda x: len(x['sections']))
+
+    valid_schedules = []
+
+    def backtrack(course_idx, current_path, combined_mask):
+        if course_idx == len(target_courses):
+            valid_schedules.append([item['data'] for item in current_path])
+            
+            if len(valid_schedules) >= max_results:
+                return True
+            return False
+            
+        current_course = target_courses[course_idx]
+        
+        for section in current_course['sections']:
+            
+            
+            if (combined_mask & section['mask']) != 0:
+                continue 
+            
+            current_path.append(section)
+            new_mask = combined_mask | section['mask']
+
+            done = backtrack(course_idx + 1, current_path, new_mask)
+            if done: return True
+            
+            # Backtrack 
+            current_path.pop()
+            
+        return False
+
+    if not target_courses:
+        return []
+
+    backtrack(0, [], initial_mask)
+    return valid_schedules
+
+
+@app.post("/submit")
+def submit(selection: Selection):
+    return {"received": selection.items}
+
+@app.get("/courses")
+def get_courses():
+    return {"courses": grouped_data}
+
+@app.post("/schedule")
+def create_schedule(selection: Selection):
+    
+    selected_items = selection.items
+    constraints = selection.constraints
+
+    start_time = time.perf_counter()
+
+    schedules = solve_schedule(selected_items, grouped_data,constraints)
+
+    end_time = time.perf_counter()
+
+    elapsed_time = end_time - start_time
+    print(constraints)
+    print(f"completed in {elapsed_time:.6f}s .")
+    print(len(schedules)," schedules found")
+    
+    return {"schedules": schedules}
