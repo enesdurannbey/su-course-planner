@@ -1,0 +1,10 @@
+# Allow all search engines to crawl the site
+User-agent: *
+Allow: /
+
+# Discourage crawling of unnecessary files
+Disallow: /node_modules/
+Disallow: /.git/
+
+# Sitemap
+Sitemap: https://su-course-planner.vercel.app/sitemap.xml
