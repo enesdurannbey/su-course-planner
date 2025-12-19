@@ -31,8 +31,6 @@ const COURSE_COLORS = [
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
 const GRID_START_MIN = 520; 
-const SLOT_HEIGHT = 64; 
-
 const HOURS = [
   "08:40", "09:40", "10:40", "11:40", "12:40", 
   "13:40", "14:40", "15:40", "16:40", "17:40", "18:40"
