@@ -20,6 +20,7 @@ build/
 # Backend
 backend/__pycache__/
 backend/.pytest_cache/
+backend/tests
 
 # Frontend (already in frontend/.gitignore but keeping for clarity)
 node_modules/
