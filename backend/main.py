@@ -179,6 +179,9 @@ def solve_schedule(selected_codes, all_courses,constraints, max_results=150):
     backtrack(0, [], initial_mask)
     return valid_schedules
 
+@app.get("/")
+def keep_alive():
+    return {"status": "I am awake!"}
 
 @app.post("/submit")
 def submit(selection: Selection):
