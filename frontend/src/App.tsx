@@ -108,16 +108,29 @@ function App() {
 
   const originalOverflow = node.style.overflow;
   const originalHeight = node.style.height;
+  const originalWidth = node.style.width;
 
   try {
-    node.style.overflow = "visible";
+    node.classList.add(
+      "overflow-visible",
+      "[-ms-overflow-style:none]",
+      "[scrollbar-width:none]",
+      "[&::-webkit-scrollbar]:hidden"
+    );
+    const exportWidth = 1280; 
+    node.style.width = `${exportWidth}px`;
+
     node.style.height = `${node.scrollHeight}px`;
 
     const dataUrl = await htmlToImage.toPng(node, {
       backgroundColor: "#ffffff",
       pixelRatio: 2,
-      width: node.scrollWidth,
+      width: exportWidth,
       height: node.scrollHeight,
+      style: {
+        width: `${exportWidth}px`,
+        height: `${node.scrollHeight}px`,
+      }
     });
 
     const link = document.createElement("a");
@@ -127,8 +140,16 @@ function App() {
   } catch (e) {
     console.error(e);
   } finally {
+    node.classList.remove(
+      "overflow-visible",
+      "[-ms-overflow-style:none]",
+      "[scrollbar-width:none]",
+      "[&::-webkit-scrollbar]:hidden"
+    );
+
     node.style.overflow = originalOverflow;
     node.style.height = originalHeight;
+    node.style.width = originalWidth;
   }
 };
 
