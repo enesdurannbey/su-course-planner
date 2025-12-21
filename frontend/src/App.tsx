@@ -1,4 +1,5 @@
 import { useEffect, useState,useRef } from "react";
+import SchedulerWorker from "./workers/schedule.worker.ts?worker";
 import * as htmlToImage from 'html-to-image';
 import Coursegrid from "./CourseGrid";
 
@@ -78,28 +79,42 @@ function App() {
       [key]: prev[key].includes(value) ? prev[key].filter(v => v !== value) : [...prev[key],value],
     }))
   }
-  const generateSchedule = async () => {
+  const generateSchedule = () => { 
     if (selected.length === 0) return alert("Please select a course.");
     
     setLoading(true);
     setSchedules([]);
     setCurrentIndex(0);
 
-    try {
-      const res = await fetch(`${API_URL}/schedule`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: selected,constraints }),
-      });
-      const data = await res.json();
-      setSchedules(data.schedules);
-      setHasSearched(true);
-    } catch (error) {
-      console.error(error);
-      alert("An error occurred.");
-    } finally {
+    const worker = new SchedulerWorker();
+
+    worker.postMessage({
+      selected,
+      courses,
+      constraints
+    });
+
+    worker.onmessage = (e) => {
+      const { status, schedules: resultSchedules } = e.data;
+      
+      if (status === "success") {
+        setSchedules(resultSchedules);
+        setHasSearched(true);
+      } else {
+        console.error("Worker Error");
+        alert("An error occurred during calculation.");
+      }
+      
       setLoading(false);
-    }
+      worker.terminate(); //?memory leak
+    };
+
+    worker.onerror = (err) => {
+      console.error("Worker System Error:", err);
+      setLoading(false);
+      alert("Calculation failed.");
+      worker.terminate();
+    };
   };
 
   const handleCopyAllCRNs = () => {
