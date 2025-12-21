@@ -27,6 +27,7 @@ function App() {
   })
   const [dayOffsOpen, setDayOffsOpen] = useState<boolean>(false);
   const [loadingCourses, setLoadingCourses] = useState(true);
+  const [copied, setCopied] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
 
   // Fetch data
@@ -99,6 +100,24 @@ function App() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCopyAllCRNs = () => {
+    if (schedules.length === 0  || !schedules[currentIndex]) return;
+
+    const currentSchedule = schedules[currentIndex];
+    const formattedText = currentSchedule.map((course:any) => {
+      const crnVal = course.crn || "???";
+      return `${course.code} - ${course.section}: ${crnVal}`;
+    }).join("\n,");
+
+    if(formattedText){
+      navigator.clipboard.writeText(formattedText);
+      setCopied(true);
+      setTimeout(()=> setCopied(false),2000)
+    }
+
+
   };
 
   const handleDownload = async () => {
@@ -372,20 +391,48 @@ function App() {
                     </svg>
                     <span>Download Schedule As Image</span>
                   </button>
+                  <button 
+                    disabled={copied}
+                    onClick={handleCopyAllCRNs}
+                    className={`
+                        flex items-center gap-1 px-3 py-1.5 rounded-md transition-all text-xs font-bold border group
+                        ${copied 
+                          ? "bg-green-100 text-green-700 border-green-200 cursor-default"
+                          : "bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-100 cursor-pointer" 
+                        }
+                      `}
+                      title="Copy Course List with CRNs"
+                  >
+                    {copied ? (
+                    <>
+                      <svg className="w-4 h-4 transition-transform scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                      </svg>
+                      <span>Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                      </svg>
+                      <span>Copy All CRNs</span>
+                    </>
+                  )}
+                  </button>
                </div>
                
                <div className="flex space-x-1">
                  <button 
                    disabled={currentIndex === 0}
                    onClick={() => setCurrentIndex(i => i - 1)}
-                   className="p-1 px-3 bg-white border rounded text-slate-500 hover:bg-slate-50 disabled:opacity-30"
+                   className="py-0.5 px-3 transition-all bg-white border not-disabled:cursor-pointer rounded text-slate-500 hover:bg-slate-50 disabled:opacity-30"
                  >
                    ←
                  </button>
                  <button 
                    disabled={currentIndex === schedules.length - 1}
                    onClick={() => setCurrentIndex(i => i + 1)}
-                   className="p-1 px-3 bg-white border rounded text-slate-500 hover:bg-slate-50 disabled:opacity-30"
+                   className="py-0.5 px-3 transition-all bg-white border not-disabled:cursor-pointer rounded text-slate-500 hover:bg-slate-50 disabled:opacity-30"
                  >
                    →
                  </button>
