@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
+import * as htmlToImage from 'html-to-image';
 import Coursegrid from "./CourseGrid";
 
 //types
@@ -9,6 +10,7 @@ type Filters = {
 }
 const DAYS_map = {"Monday":0, "Tuesday":1, "Wednesday":2, "Thursday":3, "Friday":4};
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
 function App() {
   // States
   const [courses, setCourses] = useState<GroupedCourse>({});
@@ -25,6 +27,7 @@ function App() {
   })
   const [dayOffsOpen, setDayOffsOpen] = useState<boolean>(false);
   const [loadingCourses, setLoadingCourses] = useState(true);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   // Fetch data
   useEffect(() => {
@@ -97,6 +100,37 @@ function App() {
       setLoading(false);
     }
   };
+
+  const handleDownload = async () => {
+  if (!gridRef.current) return;
+
+  const node = gridRef.current;
+
+  const originalOverflow = node.style.overflow;
+  const originalHeight = node.style.height;
+
+  try {
+    node.style.overflow = "visible";
+    node.style.height = `${node.scrollHeight}px`;
+
+    const dataUrl = await htmlToImage.toPng(node, {
+      backgroundColor: "#ffffff",
+      pixelRatio: 2,
+      width: node.scrollWidth,
+      height: node.scrollHeight,
+    });
+
+    const link = document.createElement("a");
+    link.download = `schedule-${Date.now()}.png`;
+    link.href = dataUrl;
+    link.click();
+  } catch (e) {
+    console.error(e);
+  } finally {
+    node.style.overflow = originalOverflow;
+    node.style.height = originalHeight;
+  }
+};
 
   return (
     <div className="flex h-screen bg-slate-50 text-slate-800 font-sans overflow-hidden">
@@ -307,11 +341,27 @@ function App() {
         {schedules.length > 0 && (
           <div className="flex flex-col space-y-3 mb-4">
             
-            <div className="flex justify-between items-end">
-               <h2 className="text-lg font-bold text-slate-700">
-                  Option <span className="text-indigo-600 text-xl">{currentIndex + 1}</span>
-                  <span className="text-slate-400 font-normal text-sm ml-1">/ {schedules.length}</span>
-               </h2>
+            <div className="flex justify-between items-center">
+               
+               {/* OPTION X/Y ve İNDİRME BUTONU BURADA */}
+               <div className="flex items-center gap-4">
+                  <h2 className="text-lg font-bold text-slate-700">
+                      Option <span className="text-indigo-600 text-xl">{currentIndex + 1}</span>
+                      <span className="text-slate-400 font-normal text-sm ml-1">/ {schedules.length}</span>
+                  </h2>
+
+                  {/* GÜZELLEŞTİRİLMİŞ İNDİRME BUTONU */}
+                  <button 
+                    onClick={handleDownload}
+                    className="flex items-center gap-2 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 cursor-pointer text-indigo-700 rounded-md transition-all text-xs font-bold border border-indigo-100 group"
+                    title="Download Schedule"
+                  >
+                    <svg className="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                    <span>Download Schedule As Image</span>
+                  </button>
+               </div>
                
                <div className="flex space-x-1">
                  <button 
@@ -374,7 +424,7 @@ function App() {
         )}
 
         {/* Main schedule  */}
-        <div className="flex-1 bg-white rounded-xl shadow-sm border border-slate-200 relative overflow-hidden">
+        <div ref={gridRef} className="flex-1 bg-white rounded-xl shadow-sm border border-slate-200 relative overflow-hidden">
           {schedules.length > 0 ? (
     <Coursegrid sections={schedules[currentIndex]} />
   ) : (
