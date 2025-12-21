@@ -123,7 +123,7 @@ function App() {
     const formattedText = currentSchedule.map((course:any) => {
       const crnVal = course.crn || "???";
       return `${course.code} - ${course.section}: ${crnVal}`;
-    }).join("\n,");
+    }).join(",\n");
 
     if(formattedText){
       navigator.clipboard.writeText(formattedText);
