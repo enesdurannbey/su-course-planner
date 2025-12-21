@@ -4,11 +4,15 @@ Course schedule planner for Sabancı University. Helps students find non-conflic
 
 ## Features
 
-- 🔍 Search and filter courses
-- 📅 Generate conflict-free schedules
-- ⏰ Exclude specific time slots (e.g., 8:40 AM classes)
-- 🚫 Set days off (full day blocking)
-- 🎨 Visual schedule grid with color-coded courses
+- 🔍 **Search & Filter:** Easily find courses by code or name.
+- 🛒 **Course Cart:** Manage your selected courses in a dedicated "Selected" tab.
+- 📅 **Conflict-Free Schedules:** Automatically generates valid schedule combinations using a high-performance bitmask algorithm.
+- 🧠 **Smart Grouping:** Automatically groups schedules with identical time slots (even if sections differ) to prevent visual redundancy.
+- 📸 **Download as Image:** Export your favorite schedule as a high-quality PNG image to save or share.
+- 📋 **Copy CRNs:** One-click button to copy all Course Reference Numbers (CRNs) of a schedule for easy registration.
+- ⏰ **Time Constraints:** Exclude specific time slots (e.g., 8:40 AM classes).
+- 🚫 **Day Blocking:** Set specific days off to keep your schedule clear.
+- 🎨 **Visual Grid:** Interactive schedule grid with color-coded courses and navigation.
 
 ## Tech Stack
 
@@ -16,11 +20,13 @@ Course schedule planner for Sabancı University. Helps students find non-conflic
 - React 19
 - TypeScript
 - Tailwind CSS + Vite
+- **html-to-image** (for schedule export)
 
 **Backend:**
 - FastAPI (Python)
 - Pydantic for validation
-- Bitmask algorithm for schedule conflict detection
+- **Bitmask algorithm** for high-performance conflict detection
+- Smart grouping logic for visual deduplication
 
 ## Setup
 
@@ -35,7 +41,6 @@ Course schedule planner for Sabancı University. Helps students find non-conflic
 ```bash
 cd backend
 pip install -r requirements.txt
-```
 
 **Frontend:**
 ```bash
@@ -129,10 +134,11 @@ su-course-planner/
 
 ## How It Works
 
-1. Select courses from the list
-2. Set optional constraints (exclude 8:40, days off)
-3. Click "Generate Schedule"
-4. Browse through valid schedule combinations using navigation arrows
+1. Search & Select: Browse courses and add them to your cart.
+2. Set Constraints: Optional filters to exclude 8:40 AM classes or block entire days.
+3. Generate: Click "Generate Schedule" to find valid combinations.
+4. Browse: Navigate through results. The system intelligently groups visually identical schedules.
+5. Export: Copy CRNs for registration or download the schedule image.
 
 The backend uses a bitmask algorithm to efficiently detect schedule conflicts and find valid combinations.
 
