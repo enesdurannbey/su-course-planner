@@ -10,8 +10,6 @@ type Filters = {
   "day_offs":number[]
 }
 const DAYS_map = {"Monday":0, "Tuesday":1, "Wednesday":2, "Thursday":3, "Friday":4};
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-
 function App() {
   // States
   const [courses, setCourses] = useState<GroupedCourse>({});
@@ -34,10 +32,10 @@ function App() {
   // Fetch data
   useEffect(() => {
     setLoadingCourses(true);
-    fetch(`${API_URL}/courses`)
+    fetch('/data.json')
       .then((res) => res.json())
       .then((data) => {
-        setCourses(data.courses);
+        setCourses(data);
         setLoadingCourses(false);
       })
       .catch((err) => {
