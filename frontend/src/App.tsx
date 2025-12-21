@@ -137,19 +137,23 @@ function App() {
       "[&::-webkit-scrollbar]:hidden"
     );
 
-    const exportWidth = 1280;
+    const exportWidth = 1280; 
     node.style.width = `${exportWidth}px`;
 
-    node.style.height = `${node.scrollHeight}px`;
+   
+    const contentNode = node.firstElementChild; 
+    const exportHeight = contentNode ? contentNode.scrollHeight : node.scrollHeight;
+
+    node.style.height = `${exportHeight}px`;
 
     const dataUrl = await htmlToImage.toPng(node, {
       backgroundColor: "#ffffff",
-      pixelRatio: 2,
+      pixelRatio: 2, 
       width: exportWidth,
-      height: node.scrollHeight,
+      height: exportHeight,
       style: {
         width: `${exportWidth}px`,
-        height: `${node.scrollHeight}px`,
+        height: `${exportHeight}px`,
       }
     });
 
@@ -157,6 +161,10 @@ function App() {
     link.download = `schedule-${Date.now()}.png`;
     link.href = dataUrl;
     link.click();
+
+  } catch (error) {
+    console.error("Resim oluşturulamadı:", error);
+    alert("Resim indirilirken bir hata oluştu.");
   } finally {
     node.classList.remove(
       "overflow-visible",
