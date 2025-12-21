@@ -3,6 +3,7 @@ import React from "react";
 type Section = {
   code: string;
   section: string;
+  crn?: string;
   schedule: {
     day_index: number;
     start_min: number;
@@ -55,6 +56,14 @@ export default function Coursegrid({ sections }: Props) {
 
   return COURSE_COLORS[Math.abs(hash) % COURSE_COLORS.length];
 };
+
+  const handleCopyCRN = (crn:string|undefined, e:React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if(crn){
+      navigator.clipboard.writeText(crn);
+    }
+  };
 
 
   return (
@@ -112,6 +121,7 @@ export default function Coursegrid({ sections }: Props) {
             return (
               <div
   key={`${section.code}-${sch.day_index}-${i}`}
+  onClick={(e)=>(handleCopyCRN(section.crn,e))}
   className={`
     ${colorClass}
     text-white
@@ -119,12 +129,15 @@ export default function Coursegrid({ sections }: Props) {
     border-2
     rounded shadow-md
     hover:brightness-110
-    transition-colors
+    cursor-pointer
+    active:scale-95
+    transition-all
     z-10
     flex flex-col
     overflow-hidden
     h-full
   `}
+  title={section.crn ? `Click to copy CRN: ${section.crn}` : section.code}
   style={{
     gridColumn: colStart,
     gridRow: `${rowStart} / span ${rowSpan}`,
