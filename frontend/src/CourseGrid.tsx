@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 type Section = {
   code: string;
@@ -38,6 +38,7 @@ const HOURS = [
 ];
 
 export default function Coursegrid({ sections }: Props) {
+  const [copiedCrn, setCopiedCrn] = useState<string | null>(null);
 
   const getGridRowStart = (min: number) => {
     return Math.floor((min - GRID_START_MIN) / 60) + 1;
@@ -62,6 +63,8 @@ export default function Coursegrid({ sections }: Props) {
     
     if(crn){
       navigator.clipboard.writeText(crn);
+      setCopiedCrn(crn);
+      setTimeout(() => setCopiedCrn(null), 700);
     }
   };
 
@@ -117,6 +120,7 @@ export default function Coursegrid({ sections }: Props) {
             const rowSpan = getGridRowSpan(sch.start_min, sch.end_min);
             const colStart = sch.day_index + 2;
             const colorClass = getColorByCourseCode(section.code);
+            const isCopied = copiedCrn === section.crn;
 
             return (
               <div
@@ -124,6 +128,7 @@ export default function Coursegrid({ sections }: Props) {
   onClick={(e)=>(handleCopyCRN(section.crn,e))}
   className={`
     ${colorClass}
+    relative
     text-white
     p-1 text-xs
     border-2
@@ -143,6 +148,15 @@ export default function Coursegrid({ sections }: Props) {
     gridRow: `${rowStart} / span ${rowSpan}`,
   }}
 >
+  {isCopied && (
+    <div className="transition-all absolute inset-0 flex flex-col items-center justify-center bg-black/50 backdrop-blur-[0.5px] z-20 animate-in fade-in zoom-in duration-200">
+      <svg className="w-6 h-6 text-white mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+      </svg>
+      <span className="font-bold text-white drop-shadow-md text-[10px]">Copied CRN!</span>
+    </div>
+  )}
+
   {/* TOP ROW */}
   <div className="flex justify-between items-start">
     <div className="font-bold truncate">
