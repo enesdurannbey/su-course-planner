@@ -110,7 +110,13 @@ function App() {
   const originalHeight = node.style.height;
 
   try {
-    node.style.overflow = "visible";
+    node.classList.add(
+      "overflow-visible",
+      "[-ms-overflow-style:none]",
+      "[scrollbar-width:none]",
+      "[&::-webkit-scrollbar]:hidden"
+    );
+
     node.style.height = `${node.scrollHeight}px`;
 
     const dataUrl = await htmlToImage.toPng(node, {
@@ -124,13 +130,19 @@ function App() {
     link.download = `schedule-${Date.now()}.png`;
     link.href = dataUrl;
     link.click();
-  } catch (e) {
-    console.error(e);
   } finally {
+    node.classList.remove(
+      "overflow-visible",
+      "[-ms-overflow-style:none]",
+      "[scrollbar-width:none]",
+      "[&::-webkit-scrollbar]:hidden"
+    );
+
     node.style.overflow = originalOverflow;
     node.style.height = originalHeight;
   }
 };
+
 
   return (
     <div className="flex h-screen bg-slate-50 text-slate-800 font-sans overflow-hidden">
