@@ -127,6 +127,7 @@ function App() {
 
   const originalOverflow = node.style.overflow;
   const originalHeight = node.style.height;
+  const originalWidth = node.style.width;
 
   try {
     node.classList.add(
@@ -136,13 +137,20 @@ function App() {
       "[&::-webkit-scrollbar]:hidden"
     );
 
+    const exportWidth = 1280;
+    node.style.width = `${exportWidth}px`;
+
     node.style.height = `${node.scrollHeight}px`;
 
     const dataUrl = await htmlToImage.toPng(node, {
       backgroundColor: "#ffffff",
       pixelRatio: 2,
-      width: node.scrollWidth,
+      width: exportWidth,
       height: node.scrollHeight,
+      style: {
+        width: `${exportWidth}px`,
+        height: `${node.scrollHeight}px`,
+      }
     });
 
     const link = document.createElement("a");
@@ -159,6 +167,7 @@ function App() {
 
     node.style.overflow = originalOverflow;
     node.style.height = originalHeight;
+    node.style.width = originalWidth;
   }
 };
 
