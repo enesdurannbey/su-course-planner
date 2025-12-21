@@ -121,64 +121,72 @@ function App() {
   };
 
   const handleDownload = async () => {
-  if (!gridRef.current) return;
+    if (!gridRef.current) return;
 
-  const node = gridRef.current;
+    const node = gridRef.current;
+    const contentNode = node.firstElementChild as HTMLElement;
 
-  const originalOverflow = node.style.overflow;
-  const originalHeight = node.style.height;
-  const originalWidth = node.style.width;
+    const originalOverflow = node.style.overflow;
+    const originalHeight = node.style.height;
+    const originalWidth = node.style.width;
 
-  try {
-    node.classList.add(
-      "overflow-visible",
-      "[-ms-overflow-style:none]",
-      "[scrollbar-width:none]",
-      "[&::-webkit-scrollbar]:hidden"
-    );
+    const originalContentHeight = contentNode ? contentNode.style.height : "";
 
-    const exportWidth = 1280; 
-    node.style.width = `${exportWidth}px`;
+    try {
+      node.classList.add(
+        "overflow-visible",
+        "[-ms-overflow-style:none]",
+        "[scrollbar-width:none]",
+        "[&::-webkit-scrollbar]:hidden"
+      );
 
-   
-    const contentNode = node.firstElementChild; 
-    const exportHeight = contentNode ? contentNode.scrollHeight : node.scrollHeight;
+      const exportWidth = 1280;
+      node.style.width = `${exportWidth}px`;
 
-    node.style.height = `${exportHeight}px`;
-
-    const dataUrl = await htmlToImage.toPng(node, {
-      backgroundColor: "#ffffff",
-      pixelRatio: 2, 
-      width: exportWidth,
-      height: exportHeight,
-      style: {
-        width: `${exportWidth}px`,
-        height: `${exportHeight}px`,
+      if (contentNode) {
+        contentNode.style.height = "auto";
       }
-    });
 
-    const link = document.createElement("a");
-    link.download = `schedule-${Date.now()}.png`;
-    link.href = dataUrl;
-    link.click();
+      const exportHeight = contentNode ? contentNode.scrollHeight : node.scrollHeight;
 
-  } catch (error) {
-    console.error("Resim oluşturulamadı:", error);
-    alert("Resim indirilirken bir hata oluştu.");
-  } finally {
-    node.classList.remove(
-      "overflow-visible",
-      "[-ms-overflow-style:none]",
-      "[scrollbar-width:none]",
-      "[&::-webkit-scrollbar]:hidden"
-    );
+      node.style.height = `${exportHeight}px`;
 
-    node.style.overflow = originalOverflow;
-    node.style.height = originalHeight;
-    node.style.width = originalWidth;
-  }
-};
+      const dataUrl = await htmlToImage.toPng(node, {
+        backgroundColor: "#ffffff",
+        pixelRatio: 2,
+        width: exportWidth,
+        height: exportHeight,
+        style: {
+          width: `${exportWidth}px`,
+          height: `${exportHeight}px`,
+        }
+      });
 
+      const link = document.createElement("a");
+      link.download = `schedule-${Date.now()}.png`;
+      link.href = dataUrl;
+      link.click();
+
+    } catch (error) {
+      console.error("Resim oluşturulamadı:", error);
+      alert("Resim indirilirken bir hata oluştu.");
+    } finally {
+      node.classList.remove(
+        "overflow-visible",
+        "[-ms-overflow-style:none]",
+        "[scrollbar-width:none]",
+        "[&::-webkit-scrollbar]:hidden"
+      );
+
+      node.style.overflow = originalOverflow;
+      node.style.height = originalHeight;
+      node.style.width = originalWidth;
+
+      if (contentNode) {
+        contentNode.style.height = originalContentHeight;
+      }
+    }
+  };
 
   return (
     <div className="flex h-screen bg-slate-50 text-slate-800 font-sans overflow-hidden">
