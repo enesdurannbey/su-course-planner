@@ -364,7 +364,7 @@ function App() {
             className={`w-full py-3 rounded-lg font-bold text-sm shadow-md transition-all active:scale-95 ${
               loading || selected.length === 0
                 ? "bg-slate-300 text-slate-500 cursor-not-allowed" 
-                : "bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-lg"
+                : "bg-indigo-600 cursor-pointer text-white hover:bg-indigo-700 hover:shadow-lg"
             }`}
           >
             {loading ? "Calculating..." : "Generate Schedule"}
