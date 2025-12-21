@@ -1,10 +1,20 @@
 # 📅 Sabancı University Course Planner
 
+![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-Fast-646CFF?style=flat-square&logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)
+
 **Find your perfect schedule in seconds.**
 
 This tool is designed to solve the chaos of course registration. It calculates every possible non-conflicting course schedule based on your preferences, helping you focus on choosing the best routine rather than checking for collisions manually.
 
 > **✨ v2.0 Major Update:** The project has been completely refactored to a **Client-Side (Serverless)** architecture. All computations now happen directly in your browser using **Web Workers**, ensuring zero latency and maximum privacy.
+
+## 📸 Screenshots
+<img width="1886" height="903" alt="image" src="https://github.com/user-attachments/assets/60ea3b81-a69e-47e5-9f5b-36f7d9093884" />
+
 
 ## 🌟 Key Features
 
@@ -70,18 +80,16 @@ Found a bug or have a feature idea? Feel free to open an issue or submit a Pull 
 
 ```
 su-course-planner/
-├── backend/
-│   └── data/
-│       ├── courses.json       # Course data
-│       ├── grouped_courses.json
-│       └── group_courses.py
 ├── frontend/
+│   ├── public/
+│   │   ├── data.json
 │   ├── src/
+│   │   ├── logic       # Main Algorithm 
+│   │   ├── workers       # Web Workers 
 │   │   ├── App.tsx       # Main app component
 │   │   ├── CourseGrid.tsx # Schedule grid display
 │   │   └── main.tsx
 │   ├── package.json
-│   └── .env
 └── Readme.md
 ```
 
