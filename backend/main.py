@@ -46,19 +46,20 @@ except FileNotFoundError:
     grouped_data = {}
     print("cannot find data")
 
+""" 
 BIT_RESOLUTION = 10 
-SLOTS_PER_DAY = (24 * 60) // BIT_RESOLUTION 
+SLOTS_PER_DAY = (24 * 60) // BIT_RESOLUTION  """
 
-def get_time_signature(schedule):
+""" def get_time_signature(schedule):
     times = []
     for section in schedule:
         for slot in section.get("schedule",[]):
             if slot.get("day_index",-1) != -1:
                 times.append((slot["day_index"],slot["start_min"],slot["end_min"]))
-    return tuple((sorted(times)))
+    return tuple((sorted(times))) """
 
 
-def calculate_section_bitmask(section_schedule):
+""" def calculate_section_bitmask(section_schedule):
     mask = 0
     for item in section_schedule:
         if item.get('day_index') == -1 or item.get('start_min') is None:
@@ -178,20 +179,21 @@ def solve_schedule(selected_codes, all_courses,constraints, max_results=150):
 
     backtrack(0, [], initial_mask)
     return valid_schedules
+ """
 
 @app.get("/")
 def keep_alive():
     return {"status": "I am awake!"}
 
-@app.post("/submit")
+""" @app.post("/submit")
 def submit(selection: Selection):
-    return {"received": selection.items}
+    return {"received": selection.items} """
 
 @app.get("/courses")
 def get_courses():
     return {"courses": grouped_data}
 
-@app.post("/schedule",response_class=ORJSONResponse)
+""" @app.post("/schedule",response_class=ORJSONResponse)
 def create_schedule(selection: Selection):
     
     selected_items = selection.items
@@ -224,4 +226,4 @@ def create_schedule(selection: Selection):
     print(f"completed in {elapsed_time:.6f}s .")
     print(len(full_schedules)," schedules found")
     
-    return {"schedules": limited_response}
+    return {"schedules": limited_response} """
