@@ -117,7 +117,8 @@ function App() {
       "[scrollbar-width:none]",
       "[&::-webkit-scrollbar]:hidden"
     );
-    const exportWidth = 1280; 
+
+    const exportWidth = 1280;
     node.style.width = `${exportWidth}px`;
 
     node.style.height = `${node.scrollHeight}px`;
@@ -137,8 +138,6 @@ function App() {
     link.download = `schedule-${Date.now()}.png`;
     link.href = dataUrl;
     link.click();
-  } catch (e) {
-    console.error(e);
   } finally {
     node.classList.remove(
       "overflow-visible",
