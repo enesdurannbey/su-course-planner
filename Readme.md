@@ -1,123 +1,76 @@
-# SU Course Planner
+# 📅 Sabancı University Course Planner
 
-Course schedule planner for Sabancı University. Helps students find non-conflicting course schedules based on their selected courses and preferences.
+**Find your perfect schedule in seconds.**
 
-## Features
+This tool is designed to solve the chaos of course registration. It calculates every possible non-conflicting course schedule based on your preferences, helping you focus on choosing the best routine rather than checking for collisions manually.
 
-- 🔍 **Search & Filter:** Easily find courses by code or name.
-- 🛒 **Course Cart:** Manage your selected courses in a dedicated "Selected" tab.
-- 📅 **Conflict-Free Schedules:** Automatically generates valid schedule combinations using a high-performance bitmask algorithm.
-- 🧠 **Smart Grouping:** Automatically groups schedules with identical time slots (even if sections differ) to prevent visual redundancy.
-- 📸 **Download as Image:** Export your favorite schedule as a high-quality PNG image to save or share.
-- 📋 **Copy CRNs:** One-click button to copy all Course Reference Numbers (CRNs) of a schedule for easy registration.
-- ⏰ **Time Constraints:** Exclude specific time slots (e.g., 8:40 AM classes).
-- 🚫 **Day Blocking:** Set specific days off to keep your schedule clear.
-- 🎨 **Visual Grid:** Interactive schedule grid with color-coded courses and navigation.
+> **✨ v2.0 Major Update:** The project has been completely refactored to a **Client-Side (Serverless)** architecture. All computations now happen directly in your browser using **Web Workers**, ensuring zero latency and maximum privacy.
 
-## Tech Stack
+## 🌟 Key Features
 
-**Frontend:**
-- React 19
-- TypeScript
-- Tailwind CSS + Vite
-- **html-to-image** (for schedule export)
+### ⚡ Instant & Serverless (New)
+* **Zero Latency:** Schedule generation happens instantly on your device without waiting for a server.
+* **Reliability:** Works 100% offline once loaded. No server downtimes or queues.
+* **Privacy-First:** Your course selections and constraints never leave your browser.
 
-**Backend:**
-- FastAPI (Python)
-- Pydantic for validation
-- **Bitmask algorithm** for high-performance conflict detection
-- Smart grouping logic for visual deduplication
+### 🧠 Smart Scheduling
+* **Conflict-Free Guarantee:** Uses a high-performance **Bitmask Algorithm** to detect overlaps in milliseconds.
+* **Smart Grouping:** Automatically groups schedules that look identical visually (even if section numbers differ) to prevent clutter and redundancy.
+* **Visual Grid:** Interactive, color-coded grid to visualize your week at a glance.
 
-## Setup
+### 🎛️ Advanced Filtering
+* **🚫 "No 8:40" Mode:** One-click filter to exclude all schedules starting at 8:40 AM.
+* **🏖️ Day Blocking:** Select specific days off (e.g., "I want Fridays empty") and the system will find schedules that fit.
 
-### Prerequisites
-- Python 3.8+
-- Node.js 16+
-- npm or yarn
+### 📤 Ready for Registration
+* **📋 Copy CRNs:** Found the perfect plan? Click one button to copy all Course Reference Numbers (CRNs) to your clipboard for easy registration.
+* **📸 Download as Image:** Export your schedule as a high-quality PNG to save to your phone or share with friends.
 
-### Installation
+---
 
-**Backend:**
-```bash
-cd backend
-pip install -r requirements.txt
+## 🛠️ Tech Stack
 
-**Frontend:**
-```bash
-cd frontend
-npm install
-```
+**Core:**
+* **React 19** & **TypeScript**
+* **Vite** (Build Tool)
+* **Tailwind CSS** (Styling)
 
-## Running the Application
+**Performance:**
+* **Web Workers:** Off-main-thread computation for UI responsiveness.
+* **Bitmasking:** Optimized bitwise operations for collision detection.
 
-**Backend (from `backend/` directory):**
-```bash
-uvicorn main:app --reload --port 8000
-```
+**Utilities:**
+* **html-to-image:** For schedule export.
 
-**Frontend (from `frontend/` directory):**
-```bash
-npm run dev
-```
+---
 
-The frontend will be available at `http://localhost:5173` (Vite default)
-The backend API will be at `http://localhost:8000`
+## 💻 Technical Setup (For Developers)
 
-## Environment Variables
+If you want to run this project locally or contribute:
 
-### Frontend
-Create `.env` in the `frontend/` directory (copy from `.env.example`):
-```
-VITE_API_URL=http://localhost:8000
-```
+**Prerequisites:** Node.js installed.
 
-For production, update to your backend URL:
-```
-VITE_API_URL=https://api.your-domain.com
-```
+1.  **Clone & Install:**
+    ```bash
+    git clone [https://github.com/enesdurannbey/su-course-planner.git](https://github.com/enesdurannbey/su-course-planner.git)
+    cd su-course-planner/frontend
+    npm install
+    ```
 
-### Backend
-Create `.env` in the `backend/` directory (copy from `.env.example`):
-```
-CORS_ORIGINS=http://localhost,http://localhost:5173,http://localhost:8000
-```
+2.  **Run Locally:**
+    ```bash
+    npm run dev
+    ```
+    The app will start at `http://localhost:5173`.
 
-For production, set allowed origins to your frontend domain(s):
-```
-CORS_ORIGINS=https://su-course-planner.vercel.app,https://your-domain.com
-```
-
-## Production Deployment
-
-### Backend (Python/FastAPI)
-1. Copy `.env.example` to `.env` and update CORS_ORIGINS with your production domain
-2. For Render, Railway, or similar:
-   ```bash
-   gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app
-   ```
-3. Set environment variables in your hosting platform's dashboard
-
-### Frontend (React/Vite)
-1. Copy `.env.example` to `.env.production` and update VITE_API_URL to your backend URL
-2. Build for production:
-   ```bash
-   npm run build
-   ```
-3. Deploy the `dist/` directory to Vercel, Netlify, or your hosting provider
-
-### Environment Variables Checklist
-- [ ] Backend: `CORS_ORIGINS` set to production frontend URL(s)
-- [ ] Frontend: `VITE_API_URL` set to production backend URL
-- [ ] Both `.env` files added to `.gitignore` (not committed to repository)
-- [ ] API endpoints use HTTPS in production
+## 🤝 Contributing
+Found a bug or have a feature idea? Feel free to open an issue or submit a Pull Request.
 
 ## Project Structure
 
 ```
 su-course-planner/
 ├── backend/
-│   ├── main.py           # FastAPI app & schedule solver
-│   ├── requirements.txt   # Python dependencies
 │   └── data/
 │       ├── courses.json       # Course data
 │       ├── grouped_courses.json
@@ -139,8 +92,6 @@ su-course-planner/
 3. Generate: Click "Generate Schedule" to find valid combinations.
 4. Browse: Navigate through results. The system intelligently groups visually identical schedules.
 5. Export: Copy CRNs for registration or download the schedule image.
-
-The backend uses a bitmask algorithm to efficiently detect schedule conflicts and find valid combinations.
 
 ## License
 
