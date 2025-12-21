@@ -347,7 +347,7 @@ function App() {
 
 
       {/* (SCHEDULE)  */}
-      <div className="flex-1 flex flex-col p-6 h-full relative">
+      <div className="flex-1 flex flex-col p-3 h-full relative">
         
         {/* Navigation bar - Pagination */}
         {schedules.length > 0 && (
@@ -355,14 +355,13 @@ function App() {
             
             <div className="flex justify-between items-center">
                
-               {/* OPTION X/Y ve İNDİRME BUTONU BURADA */}
                <div className="flex items-center gap-4">
                   <h2 className="text-lg font-bold text-slate-700">
                       Option <span className="text-indigo-600 text-xl">{currentIndex + 1}</span>
                       <span className="text-slate-400 font-normal text-sm ml-1">/ {schedules.length}</span>
                   </h2>
 
-                  {/* GÜZELLEŞTİRİLMİŞ İNDİRME BUTONU */}
+                  
                   <button 
                     onClick={handleDownload}
                     className="flex items-center gap-2 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 cursor-pointer text-indigo-700 rounded-md transition-all text-xs font-bold border border-indigo-100 group"
