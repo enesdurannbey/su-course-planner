@@ -351,7 +351,7 @@ function App() {
         
         {/* Navigation bar - Pagination */}
         {schedules.length > 0 && (
-          <div className="flex flex-col space-y-3 mb-4">
+          <div className="flex flex-col space-y-3 mb-2">
             
             <div className="flex justify-between items-center">
                

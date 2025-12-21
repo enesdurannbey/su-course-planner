@@ -78,7 +78,7 @@ export default function Coursegrid({ sections }: Props) {
           <React.Fragment key={hour}>
             {/* Time Column */}
             <div 
-              className="text-right pr-4 text-xs font-medium text-gray-400 flex items-center justify-end "
+              className="text-right pr-4 text-xs font-medium text-gray-700 flex items-center justify-end"
               style={{ gridRow: index + 1, height: '64px' }} 
             >
               {hour}
