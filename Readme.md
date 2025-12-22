@@ -73,9 +73,11 @@ Node.js installed.
 
 ### Clone & Install
 ```bash
-git clone https://github.com/enesdurannbey/su-course-planner.git
-cd su-course-planner/frontend
-npm install
+    git clone https://github.com/enesdurannbey/su-course-planner.git
+    cd su-course-planner/frontend
+    npm install
+```
+
 
 2.  **Run Locally:**
     ```bash
@@ -83,11 +85,11 @@ npm install
     ```
     The app will start at `http://localhost:5173`.
 
+
 ## 🤝 Contributing
 Found a bug or have a feature idea? Feel free to open an issue or submit a Pull Request.
 
 ## Project Structure
-
 ```
     su-course-planner/
     ├── frontend/
@@ -106,12 +108,12 @@ Found a bug or have a feature idea? Feel free to open an issue or submit a Pull 
 
 ## How It Works
 
-1. Search & Select: Browse courses and add them to your cart.
-2. Pin Sections (Optional): Click on a course in your list to see its sections. Toggle the lock icon to force a specific section/instructor.
-3. Set Constraints: Optional filters to exclude 8:40 AM classes or block entire days like Friday.
-4. Generate: Click "Generate Schedule" to find valid combinations.
-5. Browse: Navigate through results. The system intelligently groups visually identical schedules.
-6. Export: Copy CRNs for registration or download the schedule image.
+1. **Search & Select**: Browse courses and add them to your cart.
+2. **Pin Sections (Optional)**: Click on a course in your list to see its sections. Toggle the lock icon to force a specific section/instructor.
+3. **Set Constraints**: Optional filters to exclude 8:40 AM classes or block entire days like Friday.
+4. **Generate**: Click "Generate Schedule" to find valid combinations.
+5. **Browse**: Navigate through results. The system intelligently groups visually identical schedules.
+6. **Export**: Copy CRNs for registration or download the schedule image.
 
 ## License
 
