@@ -159,7 +159,7 @@ export default function Coursegrid({ sections }: Props) {
 
   {/* TOP ROW */}
   <div className="flex justify-between items-start">
-    <div className="font-bold">
+    <div className="font-bold truncate">
       {section.code}
     </div>
     <div className="text-[9px] font-bold whitespace-nowrap">
