@@ -89,18 +89,18 @@ Found a bug or have a feature idea? Feel free to open an issue or submit a Pull 
 ## Project Structure
 
 ```
-su-course-planner/
-├── frontend/
-│   ├── public/
-│   │   └── data.json
-│   ├── src/
-│   │   ├── logic/        # Main Algorithm (Bitmasking)
-│   │   ├── workers/      # Web Workers (Background Tasks)
-│   │   ├── App.tsx       # Main UI & State Management
-│   │   ├── CourseGrid.tsx# Visual Schedule Component
-│   │   └── main.tsx
-│   ├── package.json
-└── Readme.md
+    su-course-planner/
+    ├── frontend/
+    │   ├── public/
+    │   │   └── data.json
+    │   ├── src/
+    │   │   ├── logic/        # Main Algorithm (Bitmasking)
+    │   │   ├── workers/      # Web Workers (Background Tasks)
+    │   │   ├── App.tsx       # Main UI & State Management
+    │   │   ├── CourseGrid.tsx# Visual Schedule Component
+    │   │   └── main.tsx
+    │   ├── package.json
+    └── Readme.md
 
 ```
 
