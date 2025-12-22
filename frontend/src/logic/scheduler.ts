@@ -12,6 +12,7 @@ export interface TimeSlot {
 
 export interface Section {
   section: string;
+  crn?: string;
   schedule: TimeSlot[];
   [key: string]: any; 
 }
@@ -83,6 +84,7 @@ function solveScheduleRecursive(
   selectedCodes: string[],
   allCourses: GroupedCourses,
   constraints: { no840: boolean; day_offs: number[] },
+  pinnedSections: Record<string, string> = {},
   maxResults = 5000
 ): any[][] {
   const initialMask = calculateConstraintMask(constraints);
@@ -92,9 +94,16 @@ function solveScheduleRecursive(
   for (const code of selectedCodes) {
     if (!allCourses[code]) continue;
     
+    const courseData = allCourses[code];
+    const pinnedCRN = pinnedSections[code] || pinnedSections[courseData.name];
+
     const preparedSections = [];
     for (const section of allCourses[code].sections) {
       if (section.section === "X") continue;
+
+      if (pinnedCRN && section.crn !== pinnedCRN) {
+          continue; 
+      }
       
       const mask = calculateSectionBitmask(section.schedule);
       if ((mask & initialMask) !== 0n) continue; //? eliminate early
@@ -178,8 +187,9 @@ function groupSchedulesByVisuals(schedules: any[][]): any[][] {
 export function runScheduler(
   selectedCodes: string[],
   allCourses: GroupedCourses,
-  constraints: { no840: boolean; day_offs: number[] }
+  constraints: { no840: boolean; day_offs: number[] },
+  pinnedSections: Record<string, string> = {}
 ) {
-    const rawSchedules = solveScheduleRecursive(selectedCodes, allCourses, constraints);
+    const rawSchedules = solveScheduleRecursive(selectedCodes, allCourses, constraints,pinnedSections);
     return groupSchedulesByVisuals(rawSchedules);
 }

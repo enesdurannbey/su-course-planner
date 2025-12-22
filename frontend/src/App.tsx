@@ -16,6 +16,7 @@ function App() {
   const [courses, setCourses] = useState<GroupedCourse>({});
   const [filter, setFilter] = useState("");
   const [selected, setSelected] = useState<string[]>([]);
+  const [pinnedSections, setPinnedSections] = useState<Record<string, string>>({});
   const [schedules, setSchedules] = useState<any[][]>([]); 
   const [currentIndex, setCurrentIndex] = useState(0);     
   const [loading, setLoading] = useState(false);
@@ -61,6 +62,10 @@ function App() {
   );
 
   // functions
+  const handleClearAll = () => {
+    setSelected([]);
+    setPinnedSections({});
+};
   const toggleCourse = (code: string) => {
     setSelected(prev => 
       prev.includes(code) ? prev.filter(c => c !== code) : [...prev, code]
@@ -78,6 +83,16 @@ function App() {
       [key]: prev[key].includes(value) ? prev[key].filter(v => v !== value) : [...prev[key],value],
     }))
   }
+  const togglePin = (courseName: string, crn: string) => {
+  setPinnedSections(prev => {
+    if (prev[courseName] === crn) {
+      const newState = { ...prev };
+      delete newState[courseName];
+      return newState;
+    }
+    return { ...prev, [courseName]: crn };
+  });
+};
   const generateSchedule = () => { 
     if (selected.length === 0) return alert("Please select a course.");
     
@@ -90,7 +105,8 @@ function App() {
     worker.postMessage({
       selected,
       courses,
-      constraints
+      constraints,
+      pinnedSections
     });
 
     worker.onmessage = (e) => {
@@ -308,24 +324,108 @@ function App() {
           )}
 
           {/* chosen tab */}
+
           {activeTab === 'cart' && (
-            selected.length === 0 
-              ? <div className="text-center text-slate-400 mt-10 text-sm">No courses selected yet.</div>
-              : selected.map((code) => (
-                  <div key={code} className="flex justify-between items-center p-3 bg-white border border-slate-200 rounded-lg shadow-sm group">
-                    <div>
-                      <div className="font-bold text-slate-700 text-sm">{code}</div>
-                      <div className="text-xs text-slate-400">{courses[code]?.name}</div>
-                    </div>
+            <>
+              {selected.length === 0 ? (
+                <div className="text-center text-slate-400 mt-10 text-sm">No courses selected yet.</div>
+              ) : (
+                <>
+                  <div className="flex justify-end mb-2">
                     <button 
-                      onClick={() => toggleCourse(code)}
-                      className="text-slate-300 hover:text-red-500 transition-colors p-1"
-                      title="Remove"
+                      onClick={handleClearAll}
+                      className="text-xs font-bold text-red-500 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded border border-transparent hover:border-red-100 transition-all flex items-center gap-1"
                     >
-                      ✕
+                      <span>🗑️</span> Remove All
                     </button>
                   </div>
-                ))
+
+                  {selected.map((code) => (
+                    <div key={code} className="bg-white border border-slate-200 rounded-lg shadow-sm p-3 mb-2 group transition-all hover:shadow-md">
+                      
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <div className="font-bold text-slate-700 text-sm flex items-center gap-2">
+                            {code}
+                            {pinnedSections[code] && (
+                              <span className="text-[10px] bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded border border-indigo-200 flex items-center gap-1" title="Section Locked">
+                                🔒 <span className="font-bold">{courses[code]?.sections.find((s:any) => s.crn === pinnedSections[code])?.section}</span>
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-xs text-slate-400 truncate w-48">{courses[code]?.name}</div>
+                        </div>
+                        <button 
+                          onClick={() => toggleCourse(code)}
+                          className="text-slate-300 hover:text-red-500 transition-colors p-1"
+                          title="Remove Course"
+                        >
+                          ✕
+                        </button>
+                      </div>
+
+                      {courses[code]?.sections && (
+                        <details className="group/accordion mt-1">
+                          <summary className="list-none cursor-pointer text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 flex items-center justify-between select-none p-2 bg-indigo-50/50 rounded hover:bg-indigo-50 transition-colors border border-transparent hover:border-indigo-100">
+                            <span>
+                              {pinnedSections[code] 
+                                ? "✨ Change Section" 
+                                : "⚙️ Pin Section (Optional)"}
+                            </span>
+                            <span className="transform group-open/accordion:rotate-180 transition-transform text-[10px]">▼</span>
+                          </summary>
+                          
+                          <div className="mt-2 grid grid-cols-1 gap-2 max-h-60 overflow-y-auto pr-1 pt-1 custom-scrollbar">
+                            {courses[code].sections.map((section: any) => {
+                              const isPinned = pinnedSections[code] === section.crn;
+                              const instructorName = section.schedule?.[0]?.instructor || "Staff";
+                              
+                              return (
+                                <button
+                                  key={section.crn}
+                                  onClick={() => togglePin(code, section.crn)}
+                                  className={`
+                                    relative flex flex-col items-start p-2 rounded-md border transition-all text-left group/btn
+                                    ${isPinned 
+                                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-md ring-1 ring-indigo-400' 
+                                      : 'bg-white text-gray-600 border-slate-200 hover:border-indigo-300 hover:shadow-sm'
+                                    }
+                                  `}
+                                >
+                                  <div className="flex justify-between items-center w-full mb-1">
+                                    <span className={`font-bold text-sm ${isPinned ? 'text-white' : 'text-slate-800'}`}>
+                                      Sec {section.section}
+                                    </span>
+                                    <span className={`text-[10px] px-1.5 py-0.5 rounded ${isPinned ? 'bg-indigo-500 text-indigo-100' : 'bg-slate-100 text-slate-500'}`}>
+                                      {section.crn}
+                                    </span>
+                                  </div>
+
+                                  <div className={`text-xs flex items-center gap-1 w-full truncate ${isPinned ? 'text-indigo-100' : 'text-slate-500'}`}>
+                                    <span className="opacity-70">👨‍🏫</span> 
+                                    <span className="truncate" title={instructorName}>
+                                      {instructorName}
+                                    </span>
+                                  </div>
+
+                                  {isPinned && (
+                                    <div className="absolute -top-1 -right-1 bg-white text-indigo-600 rounded-full p-0.5 shadow-sm border border-indigo-200">
+                                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                      </svg>
+                                    </div>
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </details>
+                      )}
+                    </div>
+                  ))}
+                </>
+              )}
+            </>
           )}
           {/*Constraints */}
           {activeTab === 'constraints' && (
@@ -531,7 +631,7 @@ function App() {
           <div className="text-4xl mb-3">😕</div>
           <h3 className="font-bold text-slate-600 text-lg">No Schedule Found</h3>
           <p className="text-sm mt-1 max-w-xs">
-            The selected courses or filters (e.g., 8:40 restriction) conflict with each other. Please relax constraints and try again.
+            The selected courses, pinned sections or filters (e.g., 8:40 restriction) conflict with each other. Please relax constraints and try again.
           </p>
         </>
       ) : (
