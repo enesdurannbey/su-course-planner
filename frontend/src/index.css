@@ -3,11 +3,14 @@
 @theme {
   --font-sans: "Poppins", "sans-serif";
 }
+@variant dark (&:where(.dark, .dark *));
 
 @layer base {
   html {
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased; 
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.2s, color 0.2s;
   }
 }
+
