@@ -11,8 +11,6 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased; 
     -moz-osx-font-smoothing: grayscale;
-    transition: background-color 0.2s, color 0.2s;
-
     scrollbar-width: thin;
     scrollbar-color: #cbd5e1 transparent; 
   }

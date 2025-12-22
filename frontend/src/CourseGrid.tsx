@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { memo } from 'react';
 
 type Section = {
   code: string;
@@ -37,7 +38,7 @@ const HOURS = [
   "13:40", "14:40", "15:40", "16:40", "17:40", "18:40"
 ];
 
-export default function Coursegrid({ sections }: Props) {
+function Coursegrid({ sections }: Props) {
   const [copiedCrn, setCopiedCrn] = useState<string | null>(null);
 
   const getGridRowStart = (min: number) => {
@@ -180,3 +181,5 @@ export default function Coursegrid({ sections }: Props) {
     </div>
   );
 }
+
+export default memo(Coursegrid);
