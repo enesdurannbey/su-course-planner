@@ -70,39 +70,34 @@ export default function Coursegrid({ sections }: Props) {
 
 
   return (
-    <div className="h-full overflow-auto bg-gray-50 p-4">
+    <div className="h-full overflow-auto bg-gray-50 dark:bg-slate-900 p-4 transition-colors duration-300">
       
-      {/* HEADER (DAYS) */}
-      <div className="grid grid-cols-[80px_repeat(5,1fr)] mb-2 sticky top-0 z-20 bg-gray-50">
-        <div className="text-center text-xs font-bold text-gray-400 pt-2">Time</div>
+      <div className="grid grid-cols-[80px_repeat(5,1fr)] mb-2 sticky top-0 z-20 bg-gray-50 dark:bg-slate-900">
+        <div className="text-center text-xs font-bold text-gray-400 dark:text-gray-500 pt-2">Time</div>
         {DAYS.map((day) => (
-          <div key={day} className="text-center font-bold text-gray-700 p-2 bg-blue-100 rounded mx-1">
+          <div key={day} className="text-center font-bold text-gray-700 dark:text-gray-200 p-2 bg-blue-100 dark:bg-blue-900/30 rounded mx-1 transition-colors">
             {day}
           </div>
         ))}
       </div>
 
-      {/* GRID CONTAINER */}
       <div className="relative grid grid-cols-[80px_repeat(5,1fr)]">
         
-        {/*BACKGROUND GRID AND TIME */}
         {HOURS.map((hour, index) => (
           <React.Fragment key={hour}>
-            {/* Time Column */}
             <div 
-              className="text-right pr-4 text-xs font-medium text-gray-700 flex items-center justify-end"
+              className="text-right pr-4 text-xs font-medium text-gray-700 dark:text-gray-400 flex items-center justify-end"
               style={{ gridRow: index + 1, height: '64px' }} 
             >
               {hour}
             </div>
 
-            {/* Day Columns */}
             {DAYS.map((_, dayIndex) => (
               <div
                 key={`${hour}-${dayIndex}`}
-                className={`border-b border-r border-gray-200 h-16 ${ 
-                   index === 0 ? "border-t" : "" 
-                } ${dayIndex === 0 ? "border-l" : ""}`}
+                className={`border-b border-r border-gray-200 dark:border-slate-800 h-16 transition-colors ${ 
+                   index === 0 ? "border-t dark:border-t-slate-800" : "" 
+                } ${dayIndex === 0 ? "border-l dark:border-l-slate-800" : ""}`}
                 style={{ 
                     gridColumn: dayIndex + 2, 
                     gridRow: index + 1 
@@ -112,7 +107,6 @@ export default function Coursegrid({ sections }: Props) {
           </React.Fragment>
         ))}
 
-        {/* COURSES */}
         {sections.map((section) =>
           section.schedule.map((sch, i) => {
             
@@ -157,7 +151,6 @@ export default function Coursegrid({ sections }: Props) {
     </div>
   )}
 
-  {/* TOP ROW */}
   <div className="flex justify-between items-start">
     <div className="font-bold truncate">
       {section.code}
@@ -167,15 +160,12 @@ export default function Coursegrid({ sections }: Props) {
     </div>
   </div>
 
-  {/* SECTION */}
   <div className="text-[10px] opacity-70 truncate">
     {section.section}
   </div>
 
-  {/* BOTTOM SPACE */}
   <div className="flex-1" />
 
-  {/* COURSE LOCATION */}
   {sch.where && (
     <div className="text-[10px] font-bold truncate">
       {sch.where}
