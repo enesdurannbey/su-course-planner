@@ -1,5 +1,4 @@
 import { useEffect, useState,useRef } from "react";
-import { Analytics } from '@vercel/analytics/react';
 import SchedulerWorker from "./workers/schedule.worker.ts?worker";
 import * as htmlToImage from 'html-to-image';
 import Coursegrid from "./CourseGrid";
@@ -663,7 +662,6 @@ function App() {
         </div>
 
       </div>
-      <Analytics />
     </div>
     
   );
