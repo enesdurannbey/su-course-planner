@@ -10,8 +10,7 @@
 
 This tool is designed to solve the chaos of course registration. It calculates every possible non-conflicting course schedule based on your preferences, helping you focus on choosing the best routine rather than checking for collisions manually.
 
-> **✨ v2.0 Major Update:**  
-> The project has been completely refactored to a **Client-Side (Serverless)** architecture. All computations now happen directly in your browser using **Web Workers**, ensuring zero latency and maximum privacy.
+> **✨ v2.0 Major Update:** > The project has been completely refactored to a **Client-Side (Serverless)** architecture. All computations now happen directly in your browser using **Web Workers**, ensuring zero latency and maximum privacy.
 
 ---
 
@@ -29,6 +28,7 @@ This tool is designed to solve the chaos of course registration. It calculates e
 - **Privacy-First:** Your course selections and constraints never leave your browser.
 
 ### 🧠 Smart Scheduling & Controls
+- **🔗 Auto-Corequisites (New):** Don't worry about missing labs. The system automatically adds mandatory corequisites (e.g., IF 100 ↔ IF 100R) when you select a course. Includes a toggle for manual control.
 - **🔒 Section Pinning (New):** Have a favorite professor? Lock a specific section (e.g., "Pin Section A"), and the algorithm will generate schedules **around** that fixed choice.
 - **Conflict-Free Guarantee:** Uses a high-performance **Bitmask Algorithm** to detect overlaps in milliseconds.
 - **Smart Grouping:** Automatically groups schedules that look identical visually to prevent clutter.
@@ -73,11 +73,10 @@ Node.js installed.
 
 ### Clone & Install
 ```bash
-    git clone https://github.com/enesdurannbey/su-course-planner.git
+    git clone [https://github.com/enesdurannbey/su-course-planner.git](https://github.com/enesdurannbey/su-course-planner.git)
     cd su-course-planner/frontend
     npm install
 ```
-
 
 2.  **Run Locally:**
     ```bash
