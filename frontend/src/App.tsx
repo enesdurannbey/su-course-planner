@@ -18,6 +18,7 @@ function App() {
     return false;
   });
   const [courses, setCourses] = useState<GroupedCourse>({});
+  const [autoCoreqs, setAutoCoreqs] = useState(true);
   const [filter, setFilter] = useState("");
   const [selected, setSelected] = useState<string[]>([]);
   const [pinnedSections, setPinnedSections] = useState<Record<string, string>>({});
@@ -59,6 +60,7 @@ function App() {
       });
   }, []);
 
+
   useEffect(() => {
   if (!dayOffsOpen) {
     setConstraints(prev => ({
@@ -77,10 +79,28 @@ function App() {
     setSelected([]);
     setPinnedSections({});
 };
+
   const toggleCourse = (code: string) => {
-    setSelected(prev => 
-      prev.includes(code) ? prev.filter(c => c !== code) : [...prev, code]
-    );
+    const isRemoving = selected.includes(code);
+    const newSelected = new Set(selected);
+    const course = courses[code];
+
+    if (isRemoving) {
+      newSelected.delete(code);
+
+      if (autoCoreqs && course?.corequisites) {
+        course.corequisites.forEach((req: string) => newSelected.delete(req));
+      }
+
+    } else {
+      newSelected.add(code);
+
+      if (autoCoreqs && course?.corequisites) {
+        course.corequisites.forEach((req: string) => newSelected.add(req));
+      }
+    }
+
+    setSelected(Array.from(newSelected));
   };
   const toggleBoolean = (key:"no840") => {
     setConstraints(prev => ({
@@ -210,8 +230,8 @@ function App() {
       link.click();
 
     } catch (error) {
-      console.error("Resim oluşturulamadı:", error);
-      alert("Resim indirilirken bir hata oluştu.");
+      console.error(error);
+      alert("Error when downloading the image.");
     } finally {
       node.classList.remove(
         "overflow-visible",
@@ -300,6 +320,7 @@ function App() {
           
           {activeTab === 'search' && (
             <>
+              
               <input
                 type="text"
                 placeholder="e.g.: MATH 101"
@@ -307,6 +328,22 @@ function App() {
                 onChange={(e) => setFilter(e.target.value)}
                 disabled={loadingCourses}
               />
+              <div className="flex justify-start mb-2">
+                <button
+                  onClick={() => setAutoCoreqs(!autoCoreqs)}
+                  title="Automatically toggle main courses with Recits/Labs (IF 100 <=> IF 100R) "
+                  className={`
+                    flex items-center cursor-pointer gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold transition-all border
+                    ${autoCoreqs 
+                      ? "bg-indigo-50 text-indigo-600 border-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-800" 
+                      : "bg-slate-50 text-slate-400 border-slate-200 dark:bg-slate-800 dark:text-slate-500 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700"
+                    }
+                  `}
+                >
+                  <div className={`w-1.5 h-1.5 rounded-full ${autoCoreqs ? "bg-indigo-500 animate-pulse" : "bg-slate-300"}`} />
+                  {autoCoreqs ? "Auto-Coreqs ON" : "Auto-Coreqs OFF"}
+                </button>
+              </div>
 
               {loadingCourses ? (
                 <>
