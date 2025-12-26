@@ -1,5 +1,5 @@
 import { useEffect, useState,useRef } from "react";
-import SchedulerWorker from "./workers/schedule.worker.ts?worker";
+import SchedulerWorker from "./workers/schedule.worker.ts?worker&inline";
 import * as htmlToImage from 'html-to-image';
 import Coursegrid from "./CourseGrid";
 
