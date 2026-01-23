@@ -2,14 +2,14 @@
   "name": "frontend",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://github.com/enesdurannbey/su-course-planner",
+  "homepage": "https://github.com/enesdurannbey/suplanner",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "predeploy": "npm run build -- --base=/su-course-planner/",
+    "predeploy": "npm run build -- --base=/suplanner/",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
