@@ -2,7 +2,7 @@
   "name": "frontend",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://github.com/enesdurannbey/suplanner",
+  "homepage": "https://github.com/henesduran/suplanner",
   "type": "module",
   "scripts": {
     "dev": "vite",
