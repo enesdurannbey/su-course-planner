@@ -543,7 +543,7 @@ function App() {
         </div>
         <div className="p-3 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex justify-center">
           <a 
-            href="https://github.com/enesdurannbey/su-course-planner" 
+            href="https://github.com/henesduran/suplanner" 
             target="_blank" 
             rel="noopener noreferrer"
             className="flex items-center space-x-2 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors group"

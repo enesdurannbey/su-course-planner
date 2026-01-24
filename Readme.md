@@ -73,7 +73,7 @@ Node.js installed.
 
 ### Clone & Install
 ```bash
-    git clone [https://github.com/enesdurannbey/su-course-planner.git](https://github.com/enesdurannbey/su-course-planner.git)
+    git clone [https://github.com/henesduran/suplanner.git](https://github.com/henesduran/suplanner.git)
     cd su-course-planner/frontend
     npm install
 ```
