@@ -24,6 +24,20 @@ function App() {
     return false;
   });
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const [showHelp, setShowHelp] = useState(false);
+
+  useEffect(() => {
+    const hasSeenGuide = typeof window !== 'undefined' && localStorage.getItem('suplanner_guide_seen');
+    if (!hasSeenGuide) {
+      const timer = setTimeout(() => setShowHelp(true), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const handleCloseHelp = () => {
+    setShowHelp(false);
+    if (typeof window !== 'undefined') localStorage.setItem('suplanner_guide_seen', 'true');
+  };
   const [courses, setCourses] = useState<GroupedCourse>({});
   const [autoCoreqs, setAutoCoreqs] = useState(true);
   const [filter, setFilter] = useState("");
@@ -268,24 +282,36 @@ function App() {
             <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Termcode: 202502</p>
           </div>
 
-          <button 
-            onClick={() => setDarkMode(!darkMode)}
-            className="group p-2 rounded-lg transition-all duration-200 
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setShowHelp(true)}
+              className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:text-yellow-400 dark:hover:bg-slate-800 transition-colors"
+              title="Help / Guide"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </button>
+
+            <button 
+              onClick={() => setDarkMode(!darkMode)}
+              className="group p-2 rounded-lg transition-all duration-200 
               text-slate-400 dark:text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 
               dark:hover:text-yellow-400 dark:hover:bg-slate-700/50"
-            title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-            aria-label="Toggle Dark Mode"
-          >
-            {darkMode ? (
-              <svg className="w-5 h-5 transition-transform group-hover:rotate-90 duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-            ) : (
-              <svg className="w-5 h-5 transform transition-transform group-hover:-rotate-12 duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-              </svg>
-            )}
-          </button>
+              title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              aria-label="Toggle Dark Mode"
+            >
+              {darkMode ? (
+                <svg className="w-5 h-5 transition-transform group-hover:rotate-90 duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5 transform transition-transform group-hover:-rotate-12 duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
 
         <div className="flex px-5 mt-4 border-b border-slate-100 dark:border-slate-800 space-x-6">
@@ -683,29 +709,88 @@ function App() {
 
         <div ref={gridRef} className="flex-1 bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 relative overflow-hidden">
           {schedules.length > 0 ? (
-    <Coursegrid sections={schedules[currentIndex]} />
-  ) : (
-    <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-900/50 p-6 text-center">
-      {hasSearched ? (
-        <>
-          <div className="text-4xl mb-3">😕</div>
-          <h3 className="font-bold text-slate-600 dark:text-slate-300 text-lg">No Schedule Found</h3>
-          <p className="text-sm mt-1 max-w-xs">
-            The selected courses, pinned sections or filters (e.g., 8:40 restriction) conflict with each other. Please relax constraints and try again.
-          </p>
-        </>
+        <Coursegrid sections={schedules[currentIndex]} />
       ) : (
-        <>
-          <div className="text-4xl mb-3">📅</div>
-          <p className="font-medium">Select your courses and press the Generate Schedule button.</p>
-        </>
-      )}
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-900/50 p-6 text-center">
+          {hasSearched ? (
+            <>
+              <div className="text-4xl mb-3">😕</div>
+              <h3 className="font-bold text-slate-600 dark:text-slate-300 text-lg">No Schedule Found</h3>
+              <p className="text-sm mt-1 max-w-xs">
+                The selected courses, pinned sections or filters (e.g., 8:40 restriction) conflict with each other. Please relax constraints and try again.
+              </p>
+            </>
+          ) : (
+            <>
+              <div className="text-4xl mb-3 animate-bounce">📅</div>
+              <p className="font-medium text-slate-600 dark:text-slate-300">Ready to plan?</p>
+              <p className="text-sm mt-1 mb-4 max-w-[200px]">Select your courses from the left and press Generate.</p>
+
+              <button 
+                onClick={() => setShowHelp(true)}
+                className="text-xs text-indigo-600 dark:text-indigo-400 font-bold hover:underline flex items-center gap-1"
+              >
+                <span>How to use?</span>
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+              </button>
+            </>
+          )}
       
-    </div>
-  )}
+        </div>
+      )}
         </div>
 
       </div>
+
+      {showHelp && (
+        <div className="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden relative">
+            <button onClick={handleCloseHelp} className="absolute top-4 right-4 p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 transition-colors">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+
+            <div className="p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center text-2xl">🎓</div>
+                <div>
+                  <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Welcome!</h2>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Create your schedule in 3 steps.</p>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <div className="flex gap-4 group">
+                  <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 group-hover:bg-indigo-600 group-hover:text-white transition-colors flex items-center justify-center shrink-0 font-bold text-slate-500 text-sm">1</div>
+                  <div>
+                    <h3 className="font-bold text-slate-800 dark:text-slate-200">Add Courses</h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Search for courses (e.g. MATH 101) in the left panel and click to select.</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 group">
+                  <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 group-hover:bg-indigo-600 group-hover:text-white transition-colors flex items-center justify-center shrink-0 font-bold text-slate-500 text-sm">2</div>
+                  <div>
+                    <h3 className="font-bold text-slate-800 dark:text-slate-200">Filter (Optional)</h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Use the "Filters" tab to block 8:40 classes or specific days.</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 group">
+                  <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 group-hover:bg-indigo-600 group-hover:text-white transition-colors flex items-center justify-center shrink-0 font-bold text-slate-500 text-sm">3</div>
+                  <div>
+                    <h3 className="font-bold text-slate-800 dark:text-slate-200">Generate & Export</h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Click "Generate Schedule". Swipe through options and download the image.</p>
+                  </div>
+                </div>
+              </div>
+
+              <button onClick={handleCloseHelp} className="w-full mt-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/20 transition-all active:scale-95">
+                Got it, let's start!
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {!mobileWarningClosed && (
         <div className="md:hidden fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-300">
