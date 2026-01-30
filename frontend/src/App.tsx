@@ -17,6 +17,13 @@ function App() {
     }
     return false;
   });
+  const [mobileWarningClosed, setMobileWarningClosed] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('mobileWarningClosed') === 'true';
+    }
+    return false;
+  });
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
   const [courses, setCourses] = useState<GroupedCourse>({});
   const [autoCoreqs, setAutoCoreqs] = useState(true);
   const [filter, setFilter] = useState("");
@@ -699,6 +706,43 @@ function App() {
         </div>
 
       </div>
+
+      {!mobileWarningClosed && (
+        <div className="md:hidden fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-300">
+          <div className="w-20 h-20 bg-indigo-500/20 rounded-full flex items-center justify-center mb-6 animate-pulse">
+            <span className="text-4xl">🖥️</span>
+          </div>
+
+          <h2 className="text-2xl font-bold text-white mb-3">
+            For a Better Experience
+          </h2>
+
+          <p className="text-slate-300 text-sm leading-relaxed mb-6 max-w-xs">
+            This application contains complex tables and is difficult to use on mobile screens.
+            <br/><br/>
+            <span className="text-indigo-400 font-bold">Please enable "Request Desktop Site" in your browser settings.</span>
+          </p>
+
+          <div className="flex flex-col gap-3 w-full max-w-xs">
+            <div className="flex items-center justify-center gap-2 text-xs text-slate-500 bg-slate-800/50 p-2 rounded border border-slate-700">
+              <span>Settings ({isIOS ? 'Aa' : '⋮'})</span>
+              <span>→</span>
+              <span>Desktop Website</span>
+            </div>
+
+            <button
+              onClick={() => {
+                setMobileWarningClosed(true);
+                if (typeof window !== 'undefined') localStorage.setItem('mobileWarningClosed', 'true');
+              }}
+              className="w-full py-3 bg-white text-slate-900 font-bold rounded-lg hover:bg-slate-100 transition-colors active:scale-95"
+            >
+              Continue anyway
+            </button>
+          </div>
+        </div>
+      )}
+
     </div>
     
   );
