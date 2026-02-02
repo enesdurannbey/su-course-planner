@@ -733,6 +733,26 @@ function App() {
                 <span>How to use?</span>
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
               </button>
+
+              <div className="absolute bottom-6 flex items-center gap-2.5 px-4 py-2 rounded-full bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60 backdrop-blur-sm shadow-sm transition-all hover:bg-slate-100 dark:hover:bg-slate-800 cursor-default">
+  
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                </span>
+
+                <div className="flex flex-col items-start leading-none">
+                  
+                  <span className="text-[9px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-0.5">
+                    This is an open-source student project, not an official Sabancı University tool.
+                  </span>
+                  
+                  <span className="text-[9px] font-medium text-slate-400 dark:text-slate-500">
+                    Course schedules are subject to change. Please verify all CRNs via Bannerweb before registration.
+                  </span>
+                  
+                </div>
+              </div>
             </>
           )}
       
