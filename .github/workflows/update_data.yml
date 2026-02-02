@@ -1,0 +1,38 @@
+name: Course Data Update
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch: 
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write 
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: |
+          pip install requests beautifulsoup4
+
+      - name: Run Scraper
+        working-directory: ./scraper 
+        run: python update_courses.py
+
+      - name: Commit and Push
+        run: |
+          git config --global user.name 'CourseBot'
+          git config --global user.email 'bot@noreply.github.com'
+          
+          git add frontend/public/data.json
+          
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update: Course data refresh 🔄" && git push)
