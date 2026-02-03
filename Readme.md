@@ -15,8 +15,8 @@ This tool is designed to solve the chaos of course registration. It calculates e
 ---
 
 ## 📸 Screenshots
+<img width="1905" height="895" alt="image" src="https://github.com/user-attachments/assets/96eae3d8-1f85-4a51-9f39-b2babbc188e9" />
 
-<img width="1886" height="903" alt="image" src="https://github.com/user-attachments/assets/60ea3b81-a69e-47e5-9f5b-36f7d9093884" />
 
 ---
 
