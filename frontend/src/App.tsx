@@ -7,7 +7,8 @@ type GroupedCourse = { [code: string]: any };
 type Filters = {
   "no840": boolean,
   "day_offs":number[],
-  "compact":boolean
+  "compact":boolean,
+  "lunchBreak": boolean
 }
 const DAYS_map = {"Monday":0, "Tuesday":1, "Wednesday":2, "Thursday":3, "Friday":4};
 function App() {
@@ -53,6 +54,7 @@ function App() {
     "no840" : false,
     "day_offs" : [],
     "compact" : true,
+    "lunchBreak":false
   })
   const [dayOffsOpen, setDayOffsOpen] = useState<boolean>(false);
   const [loadingCourses, setLoadingCourses] = useState(true);
@@ -125,7 +127,7 @@ function App() {
 
     setSelected(Array.from(newSelected));
   };
-  const toggleBoolean = (key:"no840" | "compact") => {
+  const toggleBoolean = (key:"no840" | "compact" | "lunchBreak") => {
     setConstraints(prev => ({
       ...prev,
       [key]:!prev[key],
@@ -701,6 +703,56 @@ function App() {
               )
             })}
           </div>
+        </div>
+      </div>
+
+
+      <div 
+        className={`
+          flex items-center justify-between p-3 rounded-xl border transition-all duration-300 relative overflow-hidden
+          ${constraints.lunchBreak 
+            ? "bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800 shadow-sm" 
+            : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-orange-200 dark:hover:border-slate-600"
+          }
+        `}
+      >
+        <div className="flex items-center gap-3 z-10">
+          <div className={`
+            w-8 h-8 rounded-lg flex items-center justify-center transition-colors shrink-0
+            ${constraints.lunchBreak
+              ? "bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-300" 
+              : "bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500"
+            }
+          `}>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8a4 4 0 014-4h8a4 4 0 014 4v1H4V8zm0 5h16v2H4v-2zm0 5h16v1a3 3 0 01-3 3H7a3 3 0 01-3-3v-1z" />
+            </svg>
+          </div>
+
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <span className={`text-sm font-bold transition-colors ${constraints.lunchBreak ? "text-orange-900 dark:text-orange-100" : "text-slate-700 dark:text-slate-300"}`}>
+                Lunch Break
+              </span>              
+              <span className="text-[9px] font-bold bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 px-1.5 py-0.5 rounded border border-amber-200 dark:border-amber-800 tracking-wide shrink-0">
+                NEW
+              </span>
+            </div>
+            
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">
+              Keep <strong className={constraints.lunchBreak ? "text-orange-600 dark:text-orange-300" : ""}>12:40 - 13:30</strong> empty for food.
+            </span>
+          </div>
+        </div>
+
+        <div 
+          onClick={() => toggleBoolean('lunchBreak')} 
+          className={`
+            relative w-11 h-6 flex items-center rounded-full cursor-pointer transition-colors duration-300 z-10 shrink-0 ml-2
+            ${constraints.lunchBreak ? 'bg-orange-500' : 'bg-slate-200 dark:bg-slate-700'}
+          `}
+        >
+          <div className={`absolute w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-300 ease-out ${constraints.lunchBreak ? 'translate-x-6' : 'translate-x-1'}`} />
         </div>
       </div>
 

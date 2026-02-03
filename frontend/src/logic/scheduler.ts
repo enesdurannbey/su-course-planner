@@ -26,6 +26,13 @@ export interface GroupedCourses {
   [code: string]: CourseData;
 }
 
+export interface SchedulerConstraints {
+  no840: boolean;
+  day_offs: number[];
+  lunchBreak: boolean;
+  compact?: boolean;
+}
+
 function calculateSectionBitmask(schedule: TimeSlot[]): bigint {
   let mask = 0n;
   for (const slot of schedule) {
@@ -48,12 +55,27 @@ function calculateSectionBitmask(schedule: TimeSlot[]): bigint {
 }
 
 // Constraint Mask
-function calculateConstraintMask(constraints: { no840: boolean; day_offs: number[] }): bigint {
+function calculateConstraintMask(constraints:SchedulerConstraints): bigint {
   let constraintMask = 0n;
 
   if (constraints.no840) {
     const startMin = 8 * 60 + 40;
     const endMin = 9 * 60 + 30;
+    const startSlot = Math.floor(startMin / BIT_RESOLUTION);
+    const endSlot = Math.floor(endMin / BIT_RESOLUTION);
+
+    for (let dayIndex = 0; dayIndex < 5; dayIndex++) {
+      const dayOffset = dayIndex * SLOTS_PER_DAY;
+      for (let i = startSlot; i < endSlot; i++) {
+        constraintMask |= (1n << BigInt(dayOffset + i));
+      }
+    }
+  }
+
+  if (constraints.lunchBreak) {
+    const startMin = 12 * 60 + 40;
+    const endMin = 13 * 60 + 30;
+    
     const startSlot = Math.floor(startMin / BIT_RESOLUTION);
     const endSlot = Math.floor(endMin / BIT_RESOLUTION);
 
@@ -83,7 +105,7 @@ function calculateConstraintMask(constraints: { no840: boolean; day_offs: number
 function solveScheduleRecursive(
   selectedCodes: string[],
   allCourses: GroupedCourses,
-  constraints: { no840: boolean; day_offs: number[] },
+  constraints: SchedulerConstraints,
   pinnedSections: Record<string, string> = {},
   maxResults = 5000
 ): any[][] {
@@ -187,7 +209,7 @@ function groupSchedulesByVisuals(schedules: any[][]): any[][] {
 export function runScheduler(
   selectedCodes: string[],
   allCourses: GroupedCourses,
-  constraints: { no840: boolean; day_offs: number[] },
+  constraints: SchedulerConstraints,
   pinnedSections: Record<string, string> = {}
 ) {
     const rawSchedules = solveScheduleRecursive(selectedCodes, allCourses, constraints,pinnedSections);
