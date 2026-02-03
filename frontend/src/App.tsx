@@ -6,7 +6,8 @@ import Coursegrid from "./CourseGrid";
 type GroupedCourse = { [code: string]: any };
 type Filters = {
   "no840": boolean,
-  "day_offs":number[]
+  "day_offs":number[],
+  "compact":boolean
 }
 const DAYS_map = {"Monday":0, "Tuesday":1, "Wednesday":2, "Thursday":3, "Friday":4};
 function App() {
@@ -51,6 +52,7 @@ function App() {
   const [constraints,setConstraints] = useState<Filters>({
     "no840" : false,
     "day_offs" : [],
+    "compact" : true,
   })
   const [dayOffsOpen, setDayOffsOpen] = useState<boolean>(false);
   const [loadingCourses, setLoadingCourses] = useState(true);
@@ -123,7 +125,7 @@ function App() {
 
     setSelected(Array.from(newSelected));
   };
-  const toggleBoolean = (key:"no840") => {
+  const toggleBoolean = (key:"no840" | "compact") => {
     setConstraints(prev => ({
       ...prev,
       [key]:!prev[key],
@@ -274,7 +276,7 @@ function App() {
   return (
     <div className="h-screen w-screen overflow-hidden bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 font-sans">
       <div className="h-full w-full overflow-x-auto overflow-y-hidden">
-        <div className="flex h-full min-w-[1280px] relative">
+        <div className="flex h-full min-w-7xl relative">
       
           <div className="w-88 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col shadow-xl z-20 ">
             
@@ -525,42 +527,186 @@ function App() {
                 </>
               )}
               {activeTab === 'constraints' && (
-                <>
-                  <div className="text-slate-700 dark:text-slate-300 font-medium mb-4">Filters</div>
-                  
-                  <div className="flex flex-col gap-6">
+  <>
+    <div className="text-slate-700 dark:text-slate-300 font-medium mb-4 flex items-center gap-2">
+      <svg className="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+      </svg>
+      Filter Preferences
+    </div>
+    
+    <div className="flex flex-col gap-4">
 
-                    <div className="flex items-center justify-between bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
-                      <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Exclude 8:40 class</span>
-                      <div onClick={() => toggleBoolean('no840')} className={`w-12 h-6 border flex items-center rounded-full cursor-pointer p-1 transition-colors ${constraints["no840"] ? 'bg-green-500 border-green-600 justify-end' : 'bg-gray-200 dark:bg-slate-600 dark:border-slate-500 justify-start'}`}>                 <div className="w-4 h-4 rounded-full bg-white shadow-md"/></div>
-                    </div>
-                    <div className="flex flex-col gap-3 bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Days Off</span>
-                        <div onClick={() => setDayOffsOpen(prev=> !prev)} className={`w-12 h-6 border flex items-center rounded-full cursor-pointer p-1 transition-colors ${dayOffsOpen ? 'bg-green-500 border-green-600 justify-end' : 'bg-gray-200 dark:bg-slate-600 dark:border-slate-500 justify-start'}`}>
-                          <div className="w-4 h-4 rounded-full bg-white shadow-md"/></div>
-                      </div>
-                      {
-                        dayOffsOpen && (
-                          <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100 dark:border-slate-700 mt-2">
-                          {Object.entries(DAYS_map).map(([day, val]) => {
-                            const isChosen = constraints.day_offs.includes(val);
-                            return(
-                              <button onClick={() => toggleArray("day_offs",Number(val))} value={val} key={day} 
-                              className={`flex items-center px-3 py-2 text-xs font-medium rounded-lg cursor-pointer border transition-all ${
-                            isChosen ? "bg-indigo-100 dark:bg-indigo-900/40 border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300" : "bg-slate-50 dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-600"}`}
-                              >
-                                  {day}</button>
-                            )
-                          }
-                          )}
-                        </div>
-                        )
-                      }
-                    </div>
-                  </div>
-                </>
-              )}
+      <div 
+        className={`
+          flex items-center justify-between p-3 rounded-xl border transition-all duration-300 relative overflow-hidden
+          ${constraints["no840"] 
+            ? "bg-rose-50 dark:bg-rose-900/20 border-rose-200 dark:border-rose-800 shadow-sm" 
+            : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-rose-200 dark:hover:border-slate-600"
+          }
+        `}
+      >
+        <div className="flex items-center gap-3 z-10">
+          <div className={`
+            w-8 h-8 rounded-lg flex items-center justify-center transition-colors shrink-0
+            ${constraints["no840"]
+              ? "bg-rose-100 dark:bg-rose-500/20 text-rose-600 dark:text-rose-300" 
+              : "bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500"
+            }
+          `}>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+
+          <div className="flex flex-col">
+            <span className={`text-sm font-bold transition-colors ${constraints["no840"] ? "text-rose-900 dark:text-rose-100" : "text-slate-700 dark:text-slate-300"}`}>
+              Exclude 8:40 Classes
+            </span>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">
+              I want to <strong className={constraints["no840"] ? "text-rose-600 dark:text-rose-300" : ""}>sleep in</strong>. No early starts.
+            </span>
+          </div>
+        </div>
+
+        <div 
+          onClick={() => toggleBoolean('no840')} 
+          className={`
+            relative w-11 h-6 flex items-center rounded-full cursor-pointer transition-colors duration-300 z-10 shrink-0 ml-2
+            ${constraints["no840"] ? 'bg-rose-500' : 'bg-slate-200 dark:bg-slate-700'}
+          `}
+        >
+          <div className={`absolute w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-300 ease-out ${constraints["no840"] ? 'translate-x-6' : 'translate-x-1'}`} />
+        </div>
+      </div>
+
+
+      <div 
+        className={`
+          flex items-center justify-between p-3 rounded-xl border transition-all duration-300 relative overflow-hidden
+          ${constraints.compact 
+            ? "bg-indigo-50 dark:bg-indigo-900/20 border-indigo-200 dark:border-indigo-800 shadow-sm" 
+            : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-indigo-100 dark:hover:border-slate-600"
+          }
+        `}
+      >
+        {constraints.compact && (
+          <div className="absolute top-0 right-0 -mt-2 -mr-2 w-16 h-16 bg-indigo-400/10 rounded-full blur-xl pointer-events-none"></div>
+        )}
+
+        <div className="flex items-center gap-3 z-10 overflow-hidden">
+          <div className={`
+            w-8 h-8 rounded-lg flex items-center justify-center transition-colors shrink-0
+            ${constraints.compact 
+              ? "bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300" 
+              : "bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500"
+            }
+          `}>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <span className={`text-sm font-bold transition-colors ${constraints.compact ? "text-indigo-900 dark:text-indigo-100" : "text-slate-700 dark:text-slate-300"}`}>
+                Minimize Gaps
+              </span>
+              <span className="text-[9px] font-bold bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 px-1.5 py-0.5 rounded border border-amber-200 dark:border-amber-800 tracking-wide shrink-0">
+                NEW
+              </span>
+            </div>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">
+              Prioritizes schedules with the <strong className={constraints.compact ? "text-indigo-600 dark:text-indigo-300" : ""}>least waiting time</strong> between classes.
+            </span>
+          </div>
+        </div>
+        
+        <div 
+          onClick={() => toggleBoolean('compact')} 
+          className={`
+            relative w-11 h-6 flex items-center rounded-full cursor-pointer transition-colors duration-300 z-10 shrink-0 ml-2
+            ${constraints.compact ? 'bg-indigo-500' : 'bg-slate-200 dark:bg-slate-700'}
+          `}
+        >
+          <div className={`absolute w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-300 ease-out ${constraints.compact ? 'translate-x-6' : 'translate-x-1'}`} />
+        </div>
+      </div>
+
+
+      <div className={`
+        rounded-xl border transition-all duration-300 overflow-hidden
+        ${dayOffsOpen 
+          ? "bg-emerald-50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-800" 
+          : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-emerald-200 dark:hover:border-slate-600"
+        }
+      `}>
+        <div className="flex items-center justify-between p-3">
+          <div className="flex items-center gap-3">
+            <div className={`
+              w-8 h-8 rounded-lg flex items-center justify-center transition-colors shrink-0
+              ${dayOffsOpen 
+                ? "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-300" 
+                : "bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500"
+              }
+            `}>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+
+            <div className="flex flex-col">
+              <span className={`text-sm font-bold transition-colors ${dayOffsOpen ? "text-emerald-900 dark:text-emerald-100" : "text-slate-700 dark:text-slate-300"}`}>
+                Specific Days Off
+              </span>
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">
+                Block specific days to have <strong className={dayOffsOpen ? "text-emerald-600 dark:text-emerald-300" : ""}>free time</strong>.
+              </span>
+            </div>
+          </div>
+
+          <div 
+            onClick={() => setDayOffsOpen(prev => !prev)} 
+            className={`
+              relative w-11 h-6 flex items-center rounded-full cursor-pointer transition-colors duration-300 shrink-0 ml-2
+              ${dayOffsOpen ? 'bg-emerald-500' : 'bg-slate-200 dark:bg-slate-700'}
+            `}
+          >
+            <div className={`absolute w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-300 ease-out ${dayOffsOpen ? 'translate-x-6' : 'translate-x-1'}`} />
+          </div>
+        </div>
+
+        <div className={`
+          overflow-hidden transition-all duration-300 ease-in-out
+          ${dayOffsOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}
+        `}>
+          <div className="p-3 pt-0 flex flex-wrap gap-2">
+            {Object.entries(DAYS_map).map(([day, val]) => {
+              const isChosen = constraints.day_offs.includes(val);
+              return (
+                <button 
+                  key={day}
+                  onClick={() => toggleArray("day_offs", Number(val))} 
+                  className={`
+                    flex items-center px-3 py-1.5 text-xs font-bold rounded-lg transition-all border shadow-sm
+                    ${isChosen 
+                      ? "bg-emerald-500 text-white border-emerald-600 shadow-emerald-200 dark:shadow-none" 
+                      : "bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:border-emerald-300 hover:text-emerald-600"
+                    }
+                  `}
+                >
+                  {day}
+                  {isChosen && <span className="ml-1.5">✓</span>}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </>
+)}
             </div>
 
             <div className="p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
@@ -726,7 +872,7 @@ function App() {
             <>
               <div className="text-4xl mb-3 animate-bounce">📅</div>
               <p className="font-medium text-slate-600 dark:text-slate-300">Ready to plan?</p>
-              <p className="text-sm mt-1 mb-4 max-w-[200px]">Select your courses from the left and press Generate.</p>
+              <p className="text-sm mt-1 mb-4 max-w-50">Select your courses from the left and press Generate.</p>
 
               <button 
                 onClick={() => setShowHelp(true)}
@@ -765,7 +911,7 @@ function App() {
       </div>
 
       {showHelp && (
-        <div className="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-60 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in zoom-in-95 duration-200">
           <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden relative">
             <button onClick={handleCloseHelp} className="absolute top-4 right-4 p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 transition-colors">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -815,7 +961,7 @@ function App() {
       )}
 
       {!mobileWarningClosed && (
-        <div className="md:hidden fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-300">
+        <div className="md:hidden fixed inset-0 z-100 bg-slate-900/95 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-300">
           <div className="w-20 h-20 bg-indigo-500/20 rounded-full flex items-center justify-center mb-6 animate-pulse">
             <span className="text-4xl">🖥️</span>
           </div>
