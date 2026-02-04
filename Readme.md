@@ -15,8 +15,8 @@ This tool is designed to solve the chaos of course registration. It calculates e
 ---
 
 ## 📸 Screenshots
+<img width="1905" height="895" alt="image" src="https://github.com/user-attachments/assets/96eae3d8-1f85-4a51-9f39-b2babbc188e9" />
 
-<img width="1886" height="903" alt="image" src="https://github.com/user-attachments/assets/60ea3b81-a69e-47e5-9f5b-36f7d9093884" />
 
 ---
 
@@ -35,8 +35,10 @@ This tool is designed to solve the chaos of course registration. It calculates e
 
 ### 🎛️ Advanced Filtering
 - **🚫 "No 8:40" Mode:** One-click filter to exclude all schedules starting at 8:40 AM.
+- **🍔 Lunch Break Protection (New):** A dedicated filter to ensure your schedule always has a gap between 12:40 - 13:30 for food.
+- **⏳ Minimize Gaps (New):** Smart sorting algorithm that prioritizes schedules with the least amount of waiting time between classes.
 - **🏖️ Day Blocking:** Select specific days off (e.g., "I want Fridays empty") and the system will find schedules that fit.
-
+  
 ### 🎨 User Experience
 - **🌙 Dark Mode:** Fully supported dark theme that automatically saves your preference.
 - **Visual Grid:** Interactive, color-coded grid to visualize your week at a glance.
