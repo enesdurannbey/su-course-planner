@@ -34,5 +34,13 @@ jobs:
           git config --global user.email 'bot@noreply.github.com'
           
           git add frontend/public/data.json
+
+          if git diff --staged --quiet; then
+            echo "✅ No change is seen, skipping update."
+          else
+            echo "⚠️ Identified change. Pushing..."
           
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update: Course data refresh 🔄" && git push)
+            DATE=$(date +'%Y-%m-%d %H:%M')
+            git commit -m "Auto-update: Course data refresh ($DATE) 🔄"
+            git push
+          fi
