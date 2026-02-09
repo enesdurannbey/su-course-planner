@@ -80,6 +80,7 @@ def getSubjects(session):
         for opt in term_select.find_all("option"):
             if opt.get("value"):
                 terms.append((opt.get("value"), opt.text.strip()))
+        terms = [t for t in terms if not t[0].endswith('03')]
         
         terms.sort(key=lambda x: x[0], reverse=True)
         latest_term_code, latest_term_name = terms[0]
