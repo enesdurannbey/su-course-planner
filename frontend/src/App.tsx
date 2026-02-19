@@ -40,23 +40,54 @@ function App() {
     setShowHelp(false);
     if (typeof window !== 'undefined') localStorage.setItem('suplanner_guide_seen', 'true');
   };
+
+  const [savePreferences, setSavePreferences] = useState(() => {
+    const saved = localStorage.getItem('suplanner_savePreferences');
+    return saved === 'true';
+  });
+
   const [courses, setCourses] = useState<GroupedCourse>({});
-  const [autoCoreqs, setAutoCoreqs] = useState(true);
+  const [autoCoreqs, setAutoCoreqs] = useState(() => {
+    if (!savePreferences) return true; 
+    const saved = localStorage.getItem('suplanner_autoCoreqs');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
   const [filter, setFilter] = useState("");
-  const [selected, setSelected] = useState<string[]>([]);
-  const [pinnedSections, setPinnedSections] = useState<Record<string, string>>({});
+  const [selected, setSelected] = useState<string[]>(() => {
+    if (!savePreferences) return [];
+    const saved = localStorage.getItem('suplanner_selected');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [pinnedSections, setPinnedSections] = useState<Record<string, string>>(() => {
+    if (!savePreferences) return {};
+    const saved = localStorage.getItem('suplanner_pinnedSections');
+    return saved ? JSON.parse(saved) : {};
+  });
   const [schedules, setSchedules] = useState<any[][]>([]); 
   const [currentIndex, setCurrentIndex] = useState(0);     
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [activeTab, setActiveTab] = useState<'search' | 'cart' |'constraints'>('search'); 
-  const [constraints,setConstraints] = useState<Filters>({
-    "no840" : false,
-    "day_offs" : [],
-    "compact" : true,
-    "lunchBreak":false
-  })
-  const [dayOffsOpen, setDayOffsOpen] = useState<boolean>(false);
+
+  const [constraints, setConstraints] = useState<Filters>(() => {
+    const defaultConstraints = {
+      "no840": false,
+      "day_offs": [],
+      "compact": true,
+      "lunchBreak": false
+    };
+
+    if (!savePreferences) return defaultConstraints;
+    
+    const saved = localStorage.getItem('suplanner_constraints');
+    return saved ? JSON.parse(saved) : defaultConstraints;
+  });
+
+  const [dayOffsOpen, setDayOffsOpen] = useState<boolean>(() => {
+    if (!savePreferences) return false;
+    const saved = localStorage.getItem('suplanner_dayOffsOpen');
+    return saved ? JSON.parse(saved) : false;
+  });
   const [loadingCourses, setLoadingCourses] = useState(true);
   const [copied, setCopied] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -70,6 +101,44 @@ function App() {
       localStorage.setItem('theme', 'light');
     }
   }, [darkMode]);
+
+
+  useEffect(() => {
+    localStorage.setItem('suplanner_savePreferences', String(savePreferences));
+
+    if (!savePreferences) {
+      localStorage.removeItem('suplanner_autoCoreqs');
+      localStorage.removeItem('suplanner_selected');
+      localStorage.removeItem('suplanner_pinnedSections');
+      localStorage.removeItem('suplanner_constraints');
+      localStorage.removeItem('suplanner_dayOffsOpen');
+    } else {
+      localStorage.setItem('suplanner_selected', JSON.stringify(selected));
+      localStorage.setItem('suplanner_pinnedSections', JSON.stringify(pinnedSections));
+    }
+  }, [savePreferences]);
+
+
+
+  useEffect(() => {
+    if (savePreferences) localStorage.setItem('suplanner_autoCoreqs', JSON.stringify(autoCoreqs));
+  }, [autoCoreqs, savePreferences]);
+
+  useEffect(() => {
+    if (savePreferences) localStorage.setItem('suplanner_selected', JSON.stringify(selected));
+  }, [selected, savePreferences]);
+
+  useEffect(() => {
+    if (savePreferences) localStorage.setItem('suplanner_pinnedSections', JSON.stringify(pinnedSections));
+  }, [pinnedSections, savePreferences]);
+
+  useEffect(() => {
+    if (savePreferences) localStorage.setItem('suplanner_constraints', JSON.stringify(constraints));
+  }, [constraints, savePreferences]);
+
+  useEffect(() => {
+    if (savePreferences) localStorage.setItem('suplanner_dayOffsOpen', JSON.stringify(dayOffsOpen));
+  }, [dayOffsOpen, savePreferences]);
 
   useEffect(() => {
     setLoadingCourses(true);
@@ -298,6 +367,33 @@ function App() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </button>
+
+                <button
+                onClick={() => setSavePreferences(!savePreferences)}
+                className={`
+                  p-2 rounded-lg transition-all duration-300 relative group
+                  ${savePreferences 
+                    ? "text-sky-600 bg-sky-50 dark:bg-sky-900/30 ring-1 ring-sky-200 dark:ring-sky-800" 
+                    : "text-slate-400 hover:text-sky-600 hover:bg-sky-50 dark:hover:text-sky-400 dark:hover:bg-slate-800"
+                  }
+                `}
+                title={savePreferences ? "Autosave is ON (your choices will remain after refresh)" : "Autosave is OFF"}
+              >
+                <svg className="w-5 h-5" fill={savePreferences ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
+                  {savePreferences ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                  )}
+                </svg>
+
+                {savePreferences && (
+                  <span className="absolute top-1.5 right-1.5 flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
+                  </span>
+                )}
+              </button>
 
                 <button 
                   onClick={() => setDarkMode(!darkMode)}
@@ -538,6 +634,7 @@ function App() {
     </div>
     
     <div className="flex flex-col gap-4">
+      
 
       <div 
         className={`
@@ -762,6 +859,7 @@ function App() {
             </div>
 
             <div className="p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+              
               <button
                 onClick={generateSchedule}
                 disabled={loading || selected.length === 0}
